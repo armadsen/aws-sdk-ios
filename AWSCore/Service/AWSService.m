@@ -279,6 +279,7 @@ static NSString *const AWSServiceNameSimpleDB = @"sdb";
 static NSString *const AWSServiceNameSNS = @"sns";
 static NSString *const AWSServiceNameSQS = @"sqs";
 static NSString *const AWSServiceNameSTS = @"sts";
+static NSString *const AWSServiceNameTranscribe = @"transcribe";
 
 @interface AWSEndpoint()
 
@@ -481,7 +482,9 @@ static NSString *const AWSServiceNameSTS = @"sts";
             return AWSServiceNameSQS;
         case AWSServiceSTS:
             return AWSServiceNameSTS;
-        default:
+		case AWSServiceTranscribe:
+			return AWSServiceNameTranscribe;
+		default:
             return nil;
     }
 }
