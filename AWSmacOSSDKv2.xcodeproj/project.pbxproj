@@ -269,6 +269,15 @@
 		B04C728C2066F7EB004EC501 /* AWSTranscribe.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B04C72832066F7EB004EC501 /* AWSTranscribe.framework */; };
 		B04C72912066F7EB004EC501 /* AWSTranscribeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B04C72902066F7EB004EC501 /* AWSTranscribeTests.m */; };
 		B04C72932066F7EB004EC501 /* AWSTranscribe.h in Headers */ = {isa = PBXBuildFile; fileRef = B04C72852066F7EB004EC501 /* AWSTranscribe.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B04C72A42066F9BC004EC501 /* AWSTranscribeResources.h in Headers */ = {isa = PBXBuildFile; fileRef = B04C729C2066F9BA004EC501 /* AWSTranscribeResources.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B04C72A52066F9BC004EC501 /* AWSTranscribeService.m in Sources */ = {isa = PBXBuildFile; fileRef = B04C729D2066F9BB004EC501 /* AWSTranscribeService.m */; };
+		B04C72A62066F9BC004EC501 /* AWSTranscribeModel.h in Headers */ = {isa = PBXBuildFile; fileRef = B04C729E2066F9BB004EC501 /* AWSTranscribeModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B04C72A72066F9BC004EC501 /* AWSTranscribeModel.m in Sources */ = {isa = PBXBuildFile; fileRef = B04C729F2066F9BC004EC501 /* AWSTranscribeModel.m */; };
+		B04C72A82066F9BC004EC501 /* AWSTranscribeSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = B04C72A02066F9BC004EC501 /* AWSTranscribeSerializer.m */; };
+		B04C72A92066F9BC004EC501 /* AWSTranscribeService.h in Headers */ = {isa = PBXBuildFile; fileRef = B04C72A12066F9BC004EC501 /* AWSTranscribeService.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B04C72AA2066F9BC004EC501 /* AWSTranscribeSerializer.h in Headers */ = {isa = PBXBuildFile; fileRef = B04C72A22066F9BC004EC501 /* AWSTranscribeSerializer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B04C72AB2066F9BC004EC501 /* AWSTranscribeResources.m in Sources */ = {isa = PBXBuildFile; fileRef = B04C72A32066F9BC004EC501 /* AWSTranscribeResources.m */; };
+		B04C72AD2066FA02004EC501 /* AWSCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE0D416D1C6A66E5006B91B5 /* AWSCore.framework */; };
 		B06C1D39203934B300D1E04A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B06C1D38203934B300D1E04A /* AppDelegate.swift */; };
 		B06C1D3B203934B300D1E04A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B06C1D3A203934B300D1E04A /* ViewController.swift */; };
 		B06C1D3D203934B300D1E04A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B06C1D3C203934B300D1E04A /* Assets.xcassets */; };
@@ -1487,6 +1496,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = B04C72822066F7EB004EC501;
 			remoteInfo = AWSTranscribe;
+		};
+		B04C72AE2066FA13004EC501 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CE0D41541C6A66A9006B91B5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CE0D416C1C6A66E5006B91B5;
+			remoteInfo = AWSCore;
 		};
 		B06C1D46203934EB00D1E04A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2884,6 +2900,14 @@
 		B04C728B2066F7EB004EC501 /* AWSTranscribeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AWSTranscribeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B04C72902066F7EB004EC501 /* AWSTranscribeTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AWSTranscribeTests.m; sourceTree = "<group>"; };
 		B04C72922066F7EB004EC501 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B04C729C2066F9BA004EC501 /* AWSTranscribeResources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AWSTranscribeResources.h; sourceTree = "<group>"; };
+		B04C729D2066F9BB004EC501 /* AWSTranscribeService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AWSTranscribeService.m; sourceTree = "<group>"; };
+		B04C729E2066F9BB004EC501 /* AWSTranscribeModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AWSTranscribeModel.h; sourceTree = "<group>"; };
+		B04C729F2066F9BC004EC501 /* AWSTranscribeModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AWSTranscribeModel.m; sourceTree = "<group>"; };
+		B04C72A02066F9BC004EC501 /* AWSTranscribeSerializer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AWSTranscribeSerializer.m; sourceTree = "<group>"; };
+		B04C72A12066F9BC004EC501 /* AWSTranscribeService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AWSTranscribeService.h; sourceTree = "<group>"; };
+		B04C72A22066F9BC004EC501 /* AWSTranscribeSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AWSTranscribeSerializer.h; sourceTree = "<group>"; };
+		B04C72A32066F9BC004EC501 /* AWSTranscribeResources.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AWSTranscribeResources.m; sourceTree = "<group>"; };
 		B06C1D36203934B200D1E04A /* AWSmacOSTestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AWSmacOSTestHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B06C1D38203934B300D1E04A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B06C1D3A203934B300D1E04A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -3799,6 +3823,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B04C72AD2066FA02004EC501 /* AWSCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4667,6 +4692,14 @@
 			isa = PBXGroup;
 			children = (
 				B04C72852066F7EB004EC501 /* AWSTranscribe.h */,
+				B04C729E2066F9BB004EC501 /* AWSTranscribeModel.h */,
+				B04C729F2066F9BC004EC501 /* AWSTranscribeModel.m */,
+				B04C729C2066F9BA004EC501 /* AWSTranscribeResources.h */,
+				B04C72A32066F9BC004EC501 /* AWSTranscribeResources.m */,
+				B04C72A22066F9BC004EC501 /* AWSTranscribeSerializer.h */,
+				B04C72A02066F9BC004EC501 /* AWSTranscribeSerializer.m */,
+				B04C72A12066F9BC004EC501 /* AWSTranscribeService.h */,
+				B04C729D2066F9BB004EC501 /* AWSTranscribeService.m */,
 				B04C72862066F7EB004EC501 /* Info.plist */,
 			);
 			path = AWSTranscribe;
@@ -4679,6 +4712,13 @@
 				B04C72922066F7EB004EC501 /* Info.plist */,
 			);
 			path = AWSTranscribeTests;
+			sourceTree = "<group>";
+		};
+		B04C72AC2066FA02004EC501 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		B06C1D37203934B200D1E04A /* AWSmacOSTestHost */ = {
@@ -4781,6 +4821,7 @@
 				B04C72842066F7EB004EC501 /* AWSTranscribe */,
 				B04C728F2066F7EB004EC501 /* AWSTranscribeTests */,
 				CE0D415E1C6A66AA006B91B5 /* Products */,
+				B04C72AC2066FA02004EC501 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -6471,6 +6512,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				B04C72932066F7EB004EC501 /* AWSTranscribe.h in Headers */,
+				B04C72A62066F9BC004EC501 /* AWSTranscribeModel.h in Headers */,
+				B04C72A92066F9BC004EC501 /* AWSTranscribeService.h in Headers */,
+				B04C72AA2066F9BC004EC501 /* AWSTranscribeSerializer.h in Headers */,
+				B04C72A42066F9BC004EC501 /* AWSTranscribeResources.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7223,6 +7268,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				B04C72AF2066FA13004EC501 /* PBXTargetDependency */,
 			);
 			name = AWSTranscribe;
 			productName = AWSTranscribe;
@@ -9752,6 +9798,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B04C72A72066F9BC004EC501 /* AWSTranscribeModel.m in Sources */,
+				B04C72A52066F9BC004EC501 /* AWSTranscribeService.m in Sources */,
+				B04C72AB2066F9BC004EC501 /* AWSTranscribeResources.m in Sources */,
+				B04C72A82066F9BC004EC501 /* AWSTranscribeSerializer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10913,6 +10963,11 @@
 			isa = PBXTargetDependency;
 			target = B04C72822066F7EB004EC501 /* AWSTranscribe */;
 			targetProxy = B04C729A2066F87B004EC501 /* PBXContainerItemProxy */;
+		};
+		B04C72AF2066FA13004EC501 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CE0D416C1C6A66E5006B91B5 /* AWSCore */;
+			targetProxy = B04C72AE2066FA13004EC501 /* PBXContainerItemProxy */;
 		};
 		B06C1D47203934EB00D1E04A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

@@ -1,5 +1,5 @@
 //
-// Copyright 2010-2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// Copyright 2010-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License").
 // You may not use this file except in compliance with the License.
@@ -14,14 +14,10 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <AWSCore/AWSURLRequestSerialization.h>
+#import <AWSCore/AWSURLResponseSerialization.h>
 
-//! Project version number for AWSTranscribe.
-FOUNDATION_EXPORT double AWSTranscribeVersionNumber;
+@interface AWSTranscribeResponseSerializer : AWSJSONResponseSerializer
 
-//! Project version string for AWSTranscribe.
-FOUNDATION_EXPORT const unsigned char AWSTranscribeVersionString[];
+@end
 
-// In this header, you should import all the public headers of your framework using statements like #import <AWSTranscribe/PublicHeader.h>
-
-#import <AWSCore/AWSCore.h>
-#import "AWSTranscribeService.h"
