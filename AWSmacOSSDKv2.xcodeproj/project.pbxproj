@@ -266,6 +266,9 @@
 		18F938D21DE5148E00034221 /* AWSLexVoiceButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 18F938C11DE5148E00034221 /* AWSLexVoiceButton.m */; };
 		18F938D41DE5193F00034221 /* AWSGeneralLexTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 18F938D31DE5193F00034221 /* AWSGeneralLexTests.m */; };
 		18F938D71DE520C500034221 /* AWSLexClientTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 18F938D61DE520C500034221 /* AWSLexClientTests.m */; };
+		B04C728C2066F7EB004EC501 /* AWSTranscribe.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B04C72832066F7EB004EC501 /* AWSTranscribe.framework */; };
+		B04C72912066F7EB004EC501 /* AWSTranscribeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B04C72902066F7EB004EC501 /* AWSTranscribeTests.m */; };
+		B04C72932066F7EB004EC501 /* AWSTranscribe.h in Headers */ = {isa = PBXBuildFile; fileRef = B04C72852066F7EB004EC501 /* AWSTranscribe.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B06C1D39203934B300D1E04A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B06C1D38203934B300D1E04A /* AppDelegate.swift */; };
 		B06C1D3B203934B300D1E04A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B06C1D3A203934B300D1E04A /* ViewController.swift */; };
 		B06C1D3D203934B300D1E04A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B06C1D3C203934B300D1E04A /* Assets.xcassets */; };
@@ -1470,6 +1473,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 185111CA1D78F03B0009F5C3;
 			remoteInfo = AWSDeepSense;
+		};
+		B04C728D2066F7EB004EC501 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CE0D41541C6A66A9006B91B5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B04C72822066F7EB004EC501;
+			remoteInfo = AWSTranscribe;
+		};
+		B04C729A2066F87B004EC501 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CE0D41541C6A66A9006B91B5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B04C72822066F7EB004EC501;
+			remoteInfo = AWSTranscribe;
 		};
 		B06C1D46203934EB00D1E04A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2861,6 +2878,12 @@
 		18F938C11DE5148E00034221 /* AWSLexVoiceButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AWSLexVoiceButton.m; sourceTree = "<group>"; };
 		18F938D31DE5193F00034221 /* AWSGeneralLexTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AWSGeneralLexTests.m; sourceTree = "<group>"; };
 		18F938D61DE520C500034221 /* AWSLexClientTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AWSLexClientTests.m; sourceTree = "<group>"; };
+		B04C72832066F7EB004EC501 /* AWSTranscribe.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AWSTranscribe.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B04C72852066F7EB004EC501 /* AWSTranscribe.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AWSTranscribe.h; sourceTree = "<group>"; };
+		B04C72862066F7EB004EC501 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B04C728B2066F7EB004EC501 /* AWSTranscribeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AWSTranscribeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B04C72902066F7EB004EC501 /* AWSTranscribeTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AWSTranscribeTests.m; sourceTree = "<group>"; };
+		B04C72922066F7EB004EC501 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B06C1D36203934B200D1E04A /* AWSmacOSTestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AWSmacOSTestHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B06C1D38203934B300D1E04A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B06C1D3A203934B300D1E04A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -3772,6 +3795,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B04C727F2066F7EB004EC501 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B04C72882066F7EB004EC501 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B04C728C2066F7EB004EC501 /* AWSTranscribe.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B06C1D33203934B200D1E04A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -4625,6 +4663,24 @@
 			path = AWSLexUnitTests;
 			sourceTree = "<group>";
 		};
+		B04C72842066F7EB004EC501 /* AWSTranscribe */ = {
+			isa = PBXGroup;
+			children = (
+				B04C72852066F7EB004EC501 /* AWSTranscribe.h */,
+				B04C72862066F7EB004EC501 /* Info.plist */,
+			);
+			path = AWSTranscribe;
+			sourceTree = "<group>";
+		};
+		B04C728F2066F7EB004EC501 /* AWSTranscribeTests */ = {
+			isa = PBXGroup;
+			children = (
+				B04C72902066F7EB004EC501 /* AWSTranscribeTests.m */,
+				B04C72922066F7EB004EC501 /* Info.plist */,
+			);
+			path = AWSTranscribeTests;
+			sourceTree = "<group>";
+		};
 		B06C1D37203934B200D1E04A /* AWSmacOSTestHost */ = {
 			isa = PBXGroup;
 			children = (
@@ -4722,6 +4778,8 @@
 				CE9DEA9A1C6A7F460060793F /* AWSSQSTests */,
 				CE5604DC1C6BC9B200B4E00B /* AWSSQSUnitTests */,
 				B06C1D37203934B200D1E04A /* AWSmacOSTestHost */,
+				B04C72842066F7EB004EC501 /* AWSTranscribe */,
+				B04C728F2066F7EB004EC501 /* AWSTranscribeTests */,
 				CE0D415E1C6A66AA006B91B5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -4810,6 +4868,8 @@
 				EFDE860A1ED20517008841EC /* AWSCognitoAuthUnitTests.xctest */,
 				EFDE85E11FC5DD3D00D281A2 /* AWSCognitoIdentityProviderASF.framework */,
 				B06C1D36203934B200D1E04A /* AWSmacOSTestHost.app */,
+				B04C72832066F7EB004EC501 /* AWSTranscribe.framework */,
+				B04C728B2066F7EB004EC501 /* AWSTranscribeTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -6406,6 +6466,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B04C72802066F7EB004EC501 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B04C72932066F7EB004EC501 /* AWSTranscribe.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CE0D416A1C6A66E5006B91B5 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -7143,6 +7211,42 @@
 			productReference = 18F572511D8A08FB0068546F /* AWSLexUnitTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		B04C72822066F7EB004EC501 /* AWSTranscribe */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B04C72982066F7EC004EC501 /* Build configuration list for PBXNativeTarget "AWSTranscribe" */;
+			buildPhases = (
+				B04C727E2066F7EB004EC501 /* Sources */,
+				B04C727F2066F7EB004EC501 /* Frameworks */,
+				B04C72802066F7EB004EC501 /* Headers */,
+				B04C72812066F7EB004EC501 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AWSTranscribe;
+			productName = AWSTranscribe;
+			productReference = B04C72832066F7EB004EC501 /* AWSTranscribe.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		B04C728A2066F7EB004EC501 /* AWSTranscribeTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B04C72992066F7EC004EC501 /* Build configuration list for PBXNativeTarget "AWSTranscribeTests" */;
+			buildPhases = (
+				B04C72872066F7EB004EC501 /* Sources */,
+				B04C72882066F7EB004EC501 /* Frameworks */,
+				B04C72892066F7EB004EC501 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B04C728E2066F7EB004EC501 /* PBXTargetDependency */,
+			);
+			name = AWSTranscribeTests;
+			productName = AWSTranscribeTests;
+			productReference = B04C728B2066F7EB004EC501 /* AWSTranscribeTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		B06C1D35203934B200D1E04A /* AWSmacOSTestHost */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B06C1D43203934B300D1E04A /* Build configuration list for PBXNativeTarget "AWSmacOSTestHost" */;
@@ -7175,6 +7279,7 @@
 				B06C1D6B203934EB00D1E04A /* PBXTargetDependency */,
 				B06C1D6D203934EB00D1E04A /* PBXTargetDependency */,
 				B06C1D6F203934EB00D1E04A /* PBXTargetDependency */,
+				B04C729B2066F87B004EC501 /* PBXTargetDependency */,
 			);
 			name = AWSmacOSTestHost;
 			productName = AWSmacOSTestHost;
@@ -8496,9 +8601,19 @@
 					18F572501D8A08FB0068546F = {
 						CreatedOnToolsVersion = 7.3.1;
 					};
-					B06C1D35203934B200D1E04A = {
+					B04C72822066F7EB004EC501 = {
 						CreatedOnToolsVersion = 9.2;
 						ProvisioningStyle = Manual;
+					};
+					B04C728A2066F7EB004EC501 = {
+						CreatedOnToolsVersion = 9.2;
+						DevelopmentTeam = PXZ9H8P4AQ;
+						ProvisioningStyle = Automatic;
+					};
+					B06C1D35203934B200D1E04A = {
+						CreatedOnToolsVersion = 9.2;
+						DevelopmentTeam = PXZ9H8P4AQ;
+						ProvisioningStyle = Automatic;
 					};
 					CE0D416C1C6A66E5006B91B5 = {
 						CreatedOnToolsVersion = 7.2.1;
@@ -8807,6 +8922,8 @@
 				CE9DEA8C1C6A7F460060793F /* AWSSQS */,
 				CE9DEA951C6A7F460060793F /* AWSSQSTests */,
 				CE5604DA1C6BC9B200B4E00B /* AWSSQSUnitTests */,
+				B04C72822066F7EB004EC501 /* AWSTranscribe */,
+				B04C728A2066F7EB004EC501 /* AWSTranscribeTests */,
 				CE4DFA461C6D635C00376441 /* Documentation */,
 				CEEF67961CEF8E37000110B0 /* AWSAllTests */,
 				181154751E201403008F184C /* AWSAllTestsHost */,
@@ -8921,6 +9038,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		18F5724F1D8A08FB0068546F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B04C72812066F7EB004EC501 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B04C72892066F7EB004EC501 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -9614,6 +9745,21 @@
 			files = (
 				18F938D41DE5193F00034221 /* AWSGeneralLexTests.m in Sources */,
 				183BD9471D8B0030004B2659 /* AWSTestUtility.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B04C727E2066F7EB004EC501 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B04C72872066F7EB004EC501 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B04C72912066F7EB004EC501 /* AWSTranscribeTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10757,6 +10903,16 @@
 			isa = PBXTargetDependency;
 			target = 185111CA1D78F03B0009F5C3 /* AWSLex */;
 			targetProxy = 18F572571D8A08FB0068546F /* PBXContainerItemProxy */;
+		};
+		B04C728E2066F7EB004EC501 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B04C72822066F7EB004EC501 /* AWSTranscribe */;
+			targetProxy = B04C728D2066F7EB004EC501 /* PBXContainerItemProxy */;
+		};
+		B04C729B2066F87B004EC501 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B04C72822066F7EB004EC501 /* AWSTranscribe */;
+			targetProxy = B04C729A2066F87B004EC501 /* PBXContainerItemProxy */;
 		};
 		B06C1D47203934EB00D1E04A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -11976,6 +12132,108 @@
 			};
 			name = Release;
 		};
+		B04C72942066F7EB004EC501 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = AWSTranscribe/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.amazonaws.sdk.ios.AWSTranscribe;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B04C72952066F7EB004EC501 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = AWSTranscribe/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.amazonaws.sdk.ios.AWSTranscribe;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B04C72962066F7EB004EC501 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = PXZ9H8P4AQ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = AWSTranscribeTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.syzygysoftwerksllc.AWSTranscribeTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B04C72972066F7EB004EC501 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = PXZ9H8P4AQ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = AWSTranscribeTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.syzygysoftwerksllc.AWSTranscribeTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		B06C1D44203934B300D1E04A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -11987,9 +12245,9 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = AWSmacOSTestHost/AWSmacOSTestHost.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = PXZ9H8P4AQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = AWSmacOSTestHost/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
@@ -12013,9 +12271,9 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = AWSmacOSTestHost/AWSmacOSTestHost.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = PXZ9H8P4AQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = AWSmacOSTestHost/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
@@ -14632,6 +14890,24 @@
 			buildConfigurations = (
 				18F5725A1D8A08FB0068546F /* Debug */,
 				18F5725B1D8A08FB0068546F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B04C72982066F7EC004EC501 /* Build configuration list for PBXNativeTarget "AWSTranscribe" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B04C72942066F7EB004EC501 /* Debug */,
+				B04C72952066F7EB004EC501 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B04C72992066F7EC004EC501 /* Build configuration list for PBXNativeTarget "AWSTranscribeTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B04C72962066F7EB004EC501 /* Debug */,
+				B04C72972066F7EB004EC501 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
