@@ -1,5 +1,5 @@
 //
-// Copyright 2010-2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// Copyright 2010-2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License").
 // You may not use this file except in compliance with the License.
@@ -24,10 +24,20 @@ FOUNDATION_EXPORT NSString *const AWSKMSErrorDomain;
 typedef NS_ENUM(NSInteger, AWSKMSErrorType) {
     AWSKMSErrorUnknown,
     AWSKMSErrorAlreadyExists,
+    AWSKMSErrorCloudHsmClusterInUse,
+    AWSKMSErrorCloudHsmClusterInvalidConfiguration,
+    AWSKMSErrorCloudHsmClusterNotActive,
+    AWSKMSErrorCloudHsmClusterNotFound,
+    AWSKMSErrorCloudHsmClusterNotRelated,
+    AWSKMSErrorCustomKeyStoreHasCMKs,
+    AWSKMSErrorCustomKeyStoreInvalidState,
+    AWSKMSErrorCustomKeyStoreNameInUse,
+    AWSKMSErrorCustomKeyStoreNotFound,
     AWSKMSErrorDependencyTimeout,
     AWSKMSErrorDisabled,
     AWSKMSErrorExpiredImportToken,
     AWSKMSErrorIncorrectKeyMaterial,
+    AWSKMSErrorIncorrectTrustAnchor,
     AWSKMSErrorInvalidAliasName,
     AWSKMSErrorInvalidArn,
     AWSKMSErrorInvalidCiphertext,
@@ -51,6 +61,24 @@ typedef NS_ENUM(NSInteger, AWSKMSAlgorithmSpec) {
     AWSKMSAlgorithmSpecRsaesPkcs1V15,
     AWSKMSAlgorithmSpecRsaesOaepSha1,
     AWSKMSAlgorithmSpecRsaesOaepSha256,
+};
+
+typedef NS_ENUM(NSInteger, AWSKMSConnectionErrorCodeType) {
+    AWSKMSConnectionErrorCodeTypeUnknown,
+    AWSKMSConnectionErrorCodeTypeInvalidCredentials,
+    AWSKMSConnectionErrorCodeTypeClusterNotFound,
+    AWSKMSConnectionErrorCodeTypeNetworkErrors,
+    AWSKMSConnectionErrorCodeTypeInsufficientCloudhsmHsms,
+    AWSKMSConnectionErrorCodeTypeUserLockedOut,
+};
+
+typedef NS_ENUM(NSInteger, AWSKMSConnectionStateType) {
+    AWSKMSConnectionStateTypeUnknown,
+    AWSKMSConnectionStateTypeConnected,
+    AWSKMSConnectionStateTypeConnecting,
+    AWSKMSConnectionStateTypeFailed,
+    AWSKMSConnectionStateTypeDisconnected,
+    AWSKMSConnectionStateTypeDisconnecting,
 };
 
 typedef NS_ENUM(NSInteger, AWSKMSDataKeySpec) {
@@ -78,12 +106,19 @@ typedef NS_ENUM(NSInteger, AWSKMSGrantOperation) {
     AWSKMSGrantOperationDescribeKey,
 };
 
+typedef NS_ENUM(NSInteger, AWSKMSKeyManagerType) {
+    AWSKMSKeyManagerTypeUnknown,
+    AWSKMSKeyManagerTypeAws,
+    AWSKMSKeyManagerTypeCustomer,
+};
+
 typedef NS_ENUM(NSInteger, AWSKMSKeyState) {
     AWSKMSKeyStateUnknown,
     AWSKMSKeyStateEnabled,
     AWSKMSKeyStateDisabled,
     AWSKMSKeyStatePendingDeletion,
     AWSKMSKeyStatePendingImport,
+    AWSKMSKeyStateUnavailable,
 };
 
 typedef NS_ENUM(NSInteger, AWSKMSKeyUsageType) {
@@ -95,6 +130,7 @@ typedef NS_ENUM(NSInteger, AWSKMSOriginType) {
     AWSKMSOriginTypeUnknown,
     AWSKMSOriginTypeAwsKms,
     AWSKMSOriginTypeExternal,
+    AWSKMSOriginTypeAwsCloudhsm,
 };
 
 typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
@@ -105,19 +141,30 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 @class AWSKMSAliasListEntry;
 @class AWSKMSCancelKeyDeletionRequest;
 @class AWSKMSCancelKeyDeletionResponse;
+@class AWSKMSConnectCustomKeyStoreRequest;
+@class AWSKMSConnectCustomKeyStoreResponse;
 @class AWSKMSCreateAliasRequest;
+@class AWSKMSCreateCustomKeyStoreRequest;
+@class AWSKMSCreateCustomKeyStoreResponse;
 @class AWSKMSCreateGrantRequest;
 @class AWSKMSCreateGrantResponse;
 @class AWSKMSCreateKeyRequest;
 @class AWSKMSCreateKeyResponse;
+@class AWSKMSCustomKeyStoresListEntry;
 @class AWSKMSDecryptRequest;
 @class AWSKMSDecryptResponse;
 @class AWSKMSDeleteAliasRequest;
+@class AWSKMSDeleteCustomKeyStoreRequest;
+@class AWSKMSDeleteCustomKeyStoreResponse;
 @class AWSKMSDeleteImportedKeyMaterialRequest;
+@class AWSKMSDescribeCustomKeyStoresRequest;
+@class AWSKMSDescribeCustomKeyStoresResponse;
 @class AWSKMSDescribeKeyRequest;
 @class AWSKMSDescribeKeyResponse;
 @class AWSKMSDisableKeyRequest;
 @class AWSKMSDisableKeyRotationRequest;
+@class AWSKMSDisconnectCustomKeyStoreRequest;
+@class AWSKMSDisconnectCustomKeyStoreResponse;
 @class AWSKMSEnableKeyRequest;
 @class AWSKMSEnableKeyRotationRequest;
 @class AWSKMSEncryptRequest;
@@ -162,6 +209,8 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 @class AWSKMSTagResourceRequest;
 @class AWSKMSUntagResourceRequest;
 @class AWSKMSUpdateAliasRequest;
+@class AWSKMSUpdateCustomKeyStoreRequest;
+@class AWSKMSUpdateCustomKeyStoreResponse;
 @class AWSKMSUpdateKeyDescriptionRequest;
 
 /**
@@ -194,7 +243,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 
 
 /**
- <p>The unique identifier for the customer master key (CMK) for which to cancel deletion.</p><p>To specify this value, use the unique key ID or the Amazon Resource Name (ARN) of the CMK. Examples:</p><ul><li><p>Unique key ID: 1234abcd-12ab-34cd-56ef-1234567890ab</p></li><li><p>Key ARN: arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</p></li></ul><p>To obtain the unique key ID and key ARN for a given CMK, use <a>ListKeys</a> or <a>DescribeKey</a>.</p>
+ <p>The unique identifier for the customer master key (CMK) for which to cancel deletion.</p><p>Specify the key ID or the Amazon Resource Name (ARN) of the CMK.</p><p>For example:</p><ul><li><p>Key ID: <code>1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Key ARN: <code>arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li></ul><p>To get the key ID and key ARN for a CMK, use <a>ListKeys</a> or <a>DescribeKey</a>.</p>
  */
 @property (nonatomic, strong) NSString * _Nullable keyId;
 
@@ -216,6 +265,27 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 /**
  
  */
+@interface AWSKMSConnectCustomKeyStoreRequest : AWSRequest
+
+
+/**
+ <p>Enter the key store ID of the custom key store that you want to connect. To find the ID of a custom key store, use the <a>DescribeCustomKeyStores</a> operation.</p>
+ */
+@property (nonatomic, strong) NSString * _Nullable customKeyStoreId;
+
+@end
+
+/**
+ 
+ */
+@interface AWSKMSConnectCustomKeyStoreResponse : AWSModel
+
+
+@end
+
+/**
+ 
+ */
 @interface AWSKMSCreateAliasRequest : AWSRequest
 
 
@@ -225,9 +295,50 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 @property (nonatomic, strong) NSString * _Nullable aliasName;
 
 /**
- <p>An identifier of the key for which you are creating the alias. This value cannot be another alias but can be a globally unique identifier or a fully specified ARN to a key.</p><ul><li><p>Key ARN Example - arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012</p></li><li><p>Globally Unique Key ID Example - 12345678-1234-1234-1234-123456789012</p></li></ul>
+ <p>Identifies the CMK for which you are creating the alias. This value cannot be an alias.</p><p>Specify the key ID or the Amazon Resource Name (ARN) of the CMK.</p><p>For example:</p><ul><li><p>Key ID: <code>1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Key ARN: <code>arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li></ul><p>To get the key ID and key ARN for a CMK, use <a>ListKeys</a> or <a>DescribeKey</a>.</p>
  */
 @property (nonatomic, strong) NSString * _Nullable targetKeyId;
+
+@end
+
+/**
+ 
+ */
+@interface AWSKMSCreateCustomKeyStoreRequest : AWSRequest
+
+
+/**
+ <p>Identifies the AWS CloudHSM cluster for the custom key store. Enter the cluster ID of any active AWS CloudHSM cluster that is not already associated with a custom key store. To find the cluster ID, use the <a href="http://docs.aws.amazon.com/cloudhsm/latest/APIReference/API_DescribeClusters.html">DescribeClusters</a> operation.</p>
+ */
+@property (nonatomic, strong) NSString * _Nullable cloudHsmClusterId;
+
+/**
+ <p>Specifies a friendly name for the custom key store. The name must be unique in your AWS account.</p>
+ */
+@property (nonatomic, strong) NSString * _Nullable customKeyStoreName;
+
+/**
+ <p>Enter the password of the <a href="http://docs.aws.amazon.com/kms/latest/developerguide/key-store-concepts.html#concept-kmsuser"><code>kmsuser</code> crypto user (CU) account</a> in the specified AWS CloudHSM cluster. AWS KMS logs into the cluster as this user to manage key material on your behalf.</p><p>This parameter tells AWS KMS the <code>kmsuser</code> account password; it does not change the password in the AWS CloudHSM cluster.</p>
+ */
+@property (nonatomic, strong) NSString * _Nullable keyStorePassword;
+
+/**
+ <p>Enter the content of the trust anchor certificate for the cluster. This is the content of the <code>customerCA.crt</code> file that you created when you <a href="http://docs.aws.amazon.com/cloudhsm/latest/userguide/initialize-cluster.html">initialized the cluster</a>.</p>
+ */
+@property (nonatomic, strong) NSString * _Nullable trustAnchorCertificate;
+
+@end
+
+/**
+ 
+ */
+@interface AWSKMSCreateCustomKeyStoreResponse : AWSModel
+
+
+/**
+ <p>A unique identifier for the new custom key store.</p>
+ */
+@property (nonatomic, strong) NSString * _Nullable customKeyStoreId;
 
 @end
 
@@ -238,7 +349,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 
 
 /**
- <p>The conditions under which the operations permitted by the grant are allowed.</p><p>You can use this value to allow the operations permitted by the grant only when a specified encryption context is present. For more information, see <a href="http://docs.aws.amazon.com/kms/latest/developerguide/encryption-context.html">Encryption Context</a> in the <i>AWS Key Management Service Developer Guide</i>.</p>
+ <p>A structure that you can use to allow certain operations in the grant only when the desired encryption context is present. For more information about encryption context, see <a href="http://docs.aws.amazon.com/kms/latest/developerguide/encryption-context.html">Encryption Context</a> in the <i>AWS Key Management Service Developer Guide</i>.</p>
  */
 @property (nonatomic, strong) AWSKMSGrantConstraints * _Nullable constraints;
 
@@ -248,12 +359,12 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 @property (nonatomic, strong) NSArray<NSString *> * _Nullable grantTokens;
 
 /**
- <p>The principal that is given permission to perform the operations that the grant permits.</p><p>To specify the principal, use the <a href="http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html">Amazon Resource Name (ARN)</a> of an AWS principal. Valid AWS principals include AWS accounts (root), IAM users, federated users, and assumed role users. For examples of the ARN syntax to use for specifying a principal, see <a href="http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html#arn-syntax-iam">AWS Identity and Access Management (IAM)</a> in the Example ARNs section of the <i>AWS General Reference</i>.</p>
+ <p>The principal that is given permission to perform the operations that the grant permits.</p><p>To specify the principal, use the <a href="http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html">Amazon Resource Name (ARN)</a> of an AWS principal. Valid AWS principals include AWS accounts (root), IAM users, IAM roles, federated users, and assumed role users. For examples of the ARN syntax to use for specifying a principal, see <a href="http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html#arn-syntax-iam">AWS Identity and Access Management (IAM)</a> in the Example ARNs section of the <i>AWS General Reference</i>.</p>
  */
 @property (nonatomic, strong) NSString * _Nullable granteePrincipal;
 
 /**
- <p>The unique identifier for the customer master key (CMK) that the grant applies to.</p><p>To specify this value, use the globally unique key ID or the Amazon Resource Name (ARN) of the key. Examples:</p><ul><li><p>Globally unique key ID: 12345678-1234-1234-1234-123456789012</p></li><li><p>Key ARN: arn:aws:kms:us-west-2:123456789012:key/12345678-1234-1234-1234-123456789012</p></li></ul>
+ <p>The unique identifier for the customer master key (CMK) that the grant applies to.</p><p>Specify the key ID or the Amazon Resource Name (ARN) of the CMK. To specify a CMK in a different AWS account, you must use the key ARN.</p><p>For example:</p><ul><li><p>Key ID: <code>1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Key ARN: <code>arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li></ul><p>To get the key ID and key ARN for a CMK, use <a>ListKeys</a> or <a>DescribeKey</a>.</p>
  */
 @property (nonatomic, strong) NSString * _Nullable keyId;
 
@@ -299,9 +410,14 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 
 
 /**
- <p>A flag to indicate whether to bypass the key policy lockout safety check.</p><important><p>Setting this value to true increases the likelihood that the CMK becomes unmanageable. Do not set this value to true indiscriminately.</p><p>For more information, refer to the scenario in the <a href="http://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html#key-policy-default-allow-root-enable-iam">Default Key Policy</a> section in the <i>AWS Key Management Service Developer Guide</i>.</p></important><p>Use this parameter only when you include a policy in the request and you intend to prevent the principal that is making the request from making a subsequent <a>PutKeyPolicy</a> request on the CMK.</p><p>The default value is false.</p>
+ <p>A flag to indicate whether to bypass the key policy lockout safety check.</p><important><p>Setting this value to true increases the risk that the CMK becomes unmanageable. Do not set this value to true indiscriminately.</p><p>For more information, refer to the scenario in the <a href="http://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html#key-policy-default-allow-root-enable-iam">Default Key Policy</a> section in the <i>AWS Key Management Service Developer Guide</i>.</p></important><p>Use this parameter only when you include a policy in the request and you intend to prevent the principal that is making the request from making a subsequent <a>PutKeyPolicy</a> request on the CMK.</p><p>The default value is false.</p>
  */
 @property (nonatomic, strong) NSNumber * _Nullable bypassPolicyLockoutSafetyCheck;
+
+/**
+ <p>Creates the CMK in the specified <a href="http://docs.aws.amazon.com/kms/latest/developerguide/key-store-overview.html">custom key store</a> and the key material in its associated AWS CloudHSM cluster. To create a CMK in a custom key store, you must also specify the <code>Origin</code> parameter with a value of <code>AWS_CLOUDHSM</code>. The AWS CloudHSM cluster that is associated with the custom key store must have at least two active HSMs, each in a different Availability Zone in the Region.</p><p>To find the ID of a custom key store, use the <a>DescribeCustomKeyStores</a> operation.</p><p>The response includes the custom key store ID and the ID of the AWS CloudHSM cluster.</p><p>This operation is part of the <a href="http://docs.aws.amazon.com/kms/latest/developerguide/custom-key-store-overview.html">Custom Key Store feature</a> feature in AWS KMS, which combines the convenience and extensive integration of AWS KMS with the isolation and control of a single-tenant key store.</p>
+ */
+@property (nonatomic, strong) NSString * _Nullable customKeyStoreId;
 
 /**
  <p>A description of the CMK.</p><p>Use a description that helps you decide whether the CMK is appropriate for a task.</p>
@@ -314,12 +430,12 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 @property (nonatomic, assign) AWSKMSKeyUsageType keyUsage;
 
 /**
- <p>The source of the CMK's key material.</p><p>The default is <code>AWS_KMS</code>, which means AWS KMS creates the key material. When this parameter is set to <code>EXTERNAL</code>, the request creates a CMK without key material so that you can import key material from your existing key management infrastructure. For more information about importing key material into AWS KMS, see <a href="http://docs.aws.amazon.com/kms/latest/developerguide/importing-keys.html">Importing Key Material</a> in the <i>AWS Key Management Service Developer Guide</i>.</p><p>The CMK's <code>Origin</code> is immutable and is set when the CMK is created.</p>
+ <p>The source of the CMK's key material. You cannot change the origin after you create the CMK.</p><p>The default is <code>AWS_KMS</code>, which means AWS KMS creates the key material in its own key store.</p><p>When the parameter value is <code>EXTERNAL</code>, AWS KMS creates a CMK without key material so that you can import key material from your existing key management infrastructure. For more information about importing key material into AWS KMS, see <a href="http://docs.aws.amazon.com/kms/latest/developerguide/importing-keys.html">Importing Key Material</a> in the <i>AWS Key Management Service Developer Guide</i>.</p><p>When the parameter value is <code>AWS_CLOUDHSM</code>, AWS KMS creates the CMK in a AWS KMS <a href="http://docs.aws.amazon.com/kms/latest/developerguide/key-store-overview.html">custom key store</a> and creates its key material in the associated AWS CloudHSM cluster. You must also use the <code>CustomKeyStoreId</code> parameter to identify the custom key store.</p>
  */
 @property (nonatomic, assign) AWSKMSOriginType origin;
 
 /**
- <p>The key policy to attach to the CMK.</p><p>If you specify a policy and do not set <code>BypassPolicyLockoutSafetyCheck</code> to true, the policy must meet the following criteria:</p><ul><li><p>It must allow the principal that is making the <code>CreateKey</code> request to make a subsequent <a>PutKeyPolicy</a> request on the CMK. This reduces the likelihood that the CMK becomes unmanageable. For more information, refer to the scenario in the <a href="http://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html#key-policy-default-allow-root-enable-iam">Default Key Policy</a> section in the <i>AWS Key Management Service Developer Guide</i>.</p></li><li><p>The principals that are specified in the key policy must exist and be visible to AWS KMS. When you create a new AWS principal (for example, an IAM user or role), you might need to enforce a delay before specifying the new principal in a key policy because the new principal might not immediately be visible to AWS KMS. For more information, see <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/troubleshoot_general.html#troubleshoot_general_eventual-consistency">Changes that I make are not always immediately visible</a> in the <i>IAM User Guide</i>.</p></li></ul><p>If you do not specify a policy, AWS KMS attaches a default key policy to the CMK. For more information, see <a href="http://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html#key-policy-default">Default Key Policy</a> in the <i>AWS Key Management Service Developer Guide</i>.</p><p>The policy size limit is 32 KiB (32768 bytes).</p>
+ <p>The key policy to attach to the CMK.</p><p>If you provide a key policy, it must meet the following criteria:</p><ul><li><p>If you don't set <code>BypassPolicyLockoutSafetyCheck</code> to true, the key policy must allow the principal that is making the <code>CreateKey</code> request to make a subsequent <a>PutKeyPolicy</a> request on the CMK. This reduces the risk that the CMK becomes unmanageable. For more information, refer to the scenario in the <a href="http://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html#key-policy-default-allow-root-enable-iam">Default Key Policy</a> section of the <i>AWS Key Management Service Developer Guide</i>.</p></li><li><p>Each statement in the key policy must contain one or more principals. The principals in the key policy must exist and be visible to AWS KMS. When you create a new AWS principal (for example, an IAM user or role), you might need to enforce a delay before including the new principal in a key policy because the new principal might not be immediately visible to AWS KMS. For more information, see <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/troubleshoot_general.html#troubleshoot_general_eventual-consistency">Changes that I make are not always immediately visible</a> in the <i>AWS Identity and Access Management User Guide</i>.</p></li></ul><p>If you do not provide a key policy, AWS KMS attaches a default key policy to the CMK. For more information, see <a href="http://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html#key-policy-default">Default Key Policy</a> in the <i>AWS Key Management Service Developer Guide</i>.</p><p>The key policy size limit is 32 kilobytes (32768 bytes).</p>
  */
 @property (nonatomic, strong) NSString * _Nullable policy;
 
@@ -340,6 +456,49 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
  <p>Metadata associated with the CMK.</p>
  */
 @property (nonatomic, strong) AWSKMSKeyMetadata * _Nullable keyMetadata;
+
+@end
+
+/**
+ <p>Contains information about each custom key store in the custom key store list.</p>
+ */
+@interface AWSKMSCustomKeyStoresListEntry : AWSModel
+
+
+/**
+ <p>A unique identifier for the AWS CloudHSM cluster that is associated with the custom key store.</p>
+ */
+@property (nonatomic, strong) NSString * _Nullable cloudHsmClusterId;
+
+/**
+ <p>Describes the connection error. Valid values are:</p><ul><li><p><code>CLUSTER_NOT_FOUND</code> - AWS KMS cannot find the AWS CloudHSM cluster with the specified cluster ID.</p></li><li><p><code>INSUFFICIENT_CLOUDHSM_HSMS</code> - The associated AWS CloudHSM cluster does not contain any active HSMs. To connect a custom key store to its AWS CloudHSM cluster, the cluster must contain at least one active HSM.</p></li><li><p><code>INVALID_CREDENTIALS</code> - AWS KMS does not have the correct password for the <code>kmsuser</code> crypto user in the AWS CloudHSM cluster.</p></li><li><p><code>NETWORK_ERRORS</code> - Network errors are preventing AWS KMS from connecting to the custom key store.</p></li><li><p><code>USER_LOCKED_OUT</code> - The <code>kmsuser</code> CU account is locked out of the associated AWS CloudHSM cluster due to too many failed password attempts. Before you can connect your custom key store to its AWS CloudHSM cluster, you must change the <code>kmsuser</code> account password and update the password value for the custom key store.</p></li></ul><p>For help with connection failures, see <a href="http://docs.aws.amazon.com/kms/latest/developerguide/fix-keystore.html">Troubleshooting Custom Key Stores</a> in the <i>AWS Key Management Service Developer Guide</i>.</p>
+ */
+@property (nonatomic, assign) AWSKMSConnectionErrorCodeType connectionErrorCode;
+
+/**
+ <p>Indicates whether the custom key store is connected to its AWS CloudHSM cluster.</p><p>You can create and use CMKs in your custom key stores only when its connection state is <code>CONNECTED</code>.</p><p>The value is <code>DISCONNECTED</code> if the key store has never been connected or you use the <a>DisconnectCustomKeyStore</a> operation to disconnect it. If the value is <code>CONNECTED</code> but you are having trouble using the custom key store, make sure that its associated AWS CloudHSM cluster is active and contains at least one active HSM.</p><p>A value of <code>FAILED</code> indicates that an attempt to connect was unsuccessful. For help resolving a connection failure, see <a href="http://docs.aws.amazon.com/kms/latest/developerguide/fix-keystore.html">Troubleshooting a Custom Key Store</a> in the <i>AWS Key Management Service Developer Guide</i>.</p>
+ */
+@property (nonatomic, assign) AWSKMSConnectionStateType connectionState;
+
+/**
+ <p>The date and time when the custom key store was created.</p>
+ */
+@property (nonatomic, strong) NSDate * _Nullable creationDate;
+
+/**
+ <p>A unique identifier for the custom key store.</p>
+ */
+@property (nonatomic, strong) NSString * _Nullable customKeyStoreId;
+
+/**
+ <p>The user-specified friendly name for the custom key store.</p>
+ */
+@property (nonatomic, strong) NSString * _Nullable customKeyStoreName;
+
+/**
+ <p>The trust anchor certificate of the associated AWS CloudHSM cluster. When you <a href="http://docs.aws.amazon.com/cloudhsm/latest/userguide/initialize-cluster.html#sign-csr">initialize the cluster</a>, you create this certificate and save it in the <code>customerCA.crt</code> file.</p>
+ */
+@property (nonatomic, strong) NSString * _Nullable trustAnchorCertificate;
 
 @end
 
@@ -378,7 +537,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 @property (nonatomic, strong) NSString * _Nullable keyId;
 
 /**
- <p>Decrypted plaintext data. This value may not be returned if the customer master key is not available or if you didn't have permission to use it.</p>
+ <p>Decrypted plaintext data. When you use the HTTP API or the AWS CLI, the value is Base64-encdoded. Otherwise, it is not encoded.</p>
  */
 @property (nonatomic, strong) NSData * _Nullable plaintext;
 
@@ -391,9 +550,30 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 
 
 /**
- <p>The alias to be deleted. The name must start with the word "alias" followed by a forward slash (alias/). Aliases that begin with "alias/AWS" are reserved.</p>
+ <p>The alias to be deleted. The name must start with the word "alias" followed by a forward slash (alias/). Aliases that begin with "alias/aws" are reserved.</p>
  */
 @property (nonatomic, strong) NSString * _Nullable aliasName;
+
+@end
+
+/**
+ 
+ */
+@interface AWSKMSDeleteCustomKeyStoreRequest : AWSRequest
+
+
+/**
+ <p>Enter the ID of the custom key store you want to delete. To find the ID of a custom key store, use the <a>DescribeCustomKeyStores</a> operation.</p>
+ */
+@property (nonatomic, strong) NSString * _Nullable customKeyStoreId;
+
+@end
+
+/**
+ 
+ */
+@interface AWSKMSDeleteCustomKeyStoreResponse : AWSModel
+
 
 @end
 
@@ -404,9 +584,60 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 
 
 /**
- <p>The identifier of the CMK whose key material to delete. The CMK's <code>Origin</code> must be <code>EXTERNAL</code>.</p><p>A valid identifier is the unique key ID or the Amazon Resource Name (ARN) of the CMK. Examples:</p><ul><li><p>Unique key ID: <code>1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Key ARN: <code>arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li></ul>
+ <p>The identifier of the CMK whose key material to delete. The CMK's <code>Origin</code> must be <code>EXTERNAL</code>.</p><p>Specify the key ID or the Amazon Resource Name (ARN) of the CMK.</p><p>For example:</p><ul><li><p>Key ID: <code>1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Key ARN: <code>arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li></ul><p>To get the key ID and key ARN for a CMK, use <a>ListKeys</a> or <a>DescribeKey</a>.</p>
  */
 @property (nonatomic, strong) NSString * _Nullable keyId;
+
+@end
+
+/**
+ 
+ */
+@interface AWSKMSDescribeCustomKeyStoresRequest : AWSRequest
+
+
+/**
+ <p>Gets only information about the specified custom key store. Enter the key store ID.</p><p>By default, this operation gets information about all custom key stores in the account and region. To limit the output to a particular custom key store, you can use either the <code>CustomKeyStoreId</code> or <code>CustomKeyStoreName</code> parameter, but not both.</p>
+ */
+@property (nonatomic, strong) NSString * _Nullable customKeyStoreId;
+
+/**
+ <p>Gets only information about the specified custom key store. Enter the friendly name of the custom key store.</p><p>By default, this operation gets information about all custom key stores in the account and region. To limit the output to a particular custom key store, you can use either the <code>CustomKeyStoreId</code> or <code>CustomKeyStoreName</code> parameter, but not both.</p>
+ */
+@property (nonatomic, strong) NSString * _Nullable customKeyStoreName;
+
+/**
+ <p>Use this parameter to specify the maximum number of items to return. When this value is present, AWS KMS does not return more than the specified number of items, but it might return fewer.</p>
+ */
+@property (nonatomic, strong) NSNumber * _Nullable limit;
+
+/**
+ <p>Use this parameter in a subsequent request after you receive a response with truncated results. Set it to the value of <code>NextMarker</code> from the truncated response you just received.</p>
+ */
+@property (nonatomic, strong) NSString * _Nullable marker;
+
+@end
+
+/**
+ 
+ */
+@interface AWSKMSDescribeCustomKeyStoresResponse : AWSModel
+
+
+/**
+ <p>Contains metadata about each custom key store.</p>
+ */
+@property (nonatomic, strong) NSArray<AWSKMSCustomKeyStoresListEntry *> * _Nullable customKeyStores;
+
+/**
+ <p>When <code>Truncated</code> is true, this element is present and contains the value to use for the <code>Marker</code> parameter in a subsequent request.</p>
+ */
+@property (nonatomic, strong) NSString * _Nullable nextMarker;
+
+/**
+ <p>A flag that indicates whether there are more items in the list. When this value is true, the list in this response is truncated. To get more items, pass the value of the <code>NextMarker</code> element in this response to the <code>Marker</code> parameter in a subsequent request.</p>
+ */
+@property (nonatomic, strong) NSNumber * _Nullable truncated;
 
 @end
 
@@ -422,7 +653,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 @property (nonatomic, strong) NSArray<NSString *> * _Nullable grantTokens;
 
 /**
- <p>A unique identifier for the customer master key. This value can be a globally unique identifier, a fully specified ARN to either an alias or a key, or an alias name prefixed by "alias/".</p><ul><li><p>Key ARN Example - arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012</p></li><li><p>Alias ARN Example - arn:aws:kms:us-east-1:123456789012:alias/MyAliasName</p></li><li><p>Globally Unique Key ID Example - 12345678-1234-1234-1234-123456789012</p></li><li><p>Alias Name Example - alias/MyAliasName</p></li></ul>
+ <p>Describes the specified customer master key (CMK). </p><p>If you specify a predefined AWS alias (an AWS alias with no key ID), KMS associates the alias with an <a href="http://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#master_keys">AWS managed CMK</a> and returns its <code>KeyId</code> and <code>Arn</code> in the response.</p><p>To specify a CMK, use its key ID, Amazon Resource Name (ARN), alias name, or alias ARN. When using an alias name, prefix it with "alias/". To specify a CMK in a different AWS account, you must use the key ARN or alias ARN.</p><p>For example:</p><ul><li><p>Key ID: <code>1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Key ARN: <code>arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Alias name: <code>alias/ExampleAlias</code></p></li><li><p>Alias ARN: <code>arn:aws:kms:us-east-2:111122223333:alias/ExampleAlias</code></p></li></ul><p>To get the key ID and key ARN for a CMK, use <a>ListKeys</a> or <a>DescribeKey</a>. To get the alias name and alias ARN, use <a>ListAliases</a>.</p>
  */
 @property (nonatomic, strong) NSString * _Nullable keyId;
 
@@ -448,7 +679,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 
 
 /**
- <p>A unique identifier for the CMK.</p><p>Use the CMK's unique identifier or its Amazon Resource Name (ARN). For example:</p><ul><li><p>Unique ID: 1234abcd-12ab-34cd-56ef-1234567890ab</p></li><li><p>ARN: arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</p></li></ul>
+ <p>A unique identifier for the customer master key (CMK).</p><p>Specify the key ID or the Amazon Resource Name (ARN) of the CMK.</p><p>For example:</p><ul><li><p>Key ID: <code>1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Key ARN: <code>arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li></ul><p>To get the key ID and key ARN for a CMK, use <a>ListKeys</a> or <a>DescribeKey</a>.</p>
  */
 @property (nonatomic, strong) NSString * _Nullable keyId;
 
@@ -461,9 +692,30 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 
 
 /**
- <p>A unique identifier for the customer master key. This value can be a globally unique identifier or the fully specified ARN to a key.</p><ul><li><p>Key ARN Example - arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012</p></li><li><p>Globally Unique Key ID Example - 12345678-1234-1234-1234-123456789012</p></li></ul>
+ <p>A unique identifier for the customer master key (CMK).</p><p>Specify the key ID or the Amazon Resource Name (ARN) of the CMK.</p><p>For example:</p><ul><li><p>Key ID: <code>1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Key ARN: <code>arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li></ul><p>To get the key ID and key ARN for a CMK, use <a>ListKeys</a> or <a>DescribeKey</a>.</p>
  */
 @property (nonatomic, strong) NSString * _Nullable keyId;
+
+@end
+
+/**
+ 
+ */
+@interface AWSKMSDisconnectCustomKeyStoreRequest : AWSRequest
+
+
+/**
+ <p>Enter the ID of the custom key store you want to disconnect. To find the ID of a custom key store, use the <a>DescribeCustomKeyStores</a> operation.</p>
+ */
+@property (nonatomic, strong) NSString * _Nullable customKeyStoreId;
+
+@end
+
+/**
+ 
+ */
+@interface AWSKMSDisconnectCustomKeyStoreResponse : AWSModel
+
 
 @end
 
@@ -474,7 +726,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 
 
 /**
- <p>A unique identifier for the customer master key. This value can be a globally unique identifier or the fully specified ARN to a key.</p><ul><li><p>Key ARN Example - arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012</p></li><li><p>Globally Unique Key ID Example - 12345678-1234-1234-1234-123456789012</p></li></ul>
+ <p>A unique identifier for the customer master key (CMK).</p><p>Specify the key ID or the Amazon Resource Name (ARN) of the CMK.</p><p>For example:</p><ul><li><p>Key ID: <code>1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Key ARN: <code>arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li></ul><p>To get the key ID and key ARN for a CMK, use <a>ListKeys</a> or <a>DescribeKey</a>.</p>
  */
 @property (nonatomic, strong) NSString * _Nullable keyId;
 
@@ -487,7 +739,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 
 
 /**
- <p>A unique identifier for the customer master key. This value can be a globally unique identifier or the fully specified ARN to a key.</p><ul><li><p>Key ARN Example - arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012</p></li><li><p>Globally Unique Key ID Example - 12345678-1234-1234-1234-123456789012</p></li></ul>
+ <p>A unique identifier for the customer master key (CMK).</p><p>Specify the key ID or the Amazon Resource Name (ARN) of the CMK.</p><p>For example:</p><ul><li><p>Key ID: <code>1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Key ARN: <code>arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li></ul><p>To get the key ID and key ARN for a CMK, use <a>ListKeys</a> or <a>DescribeKey</a>.</p>
  */
 @property (nonatomic, strong) NSString * _Nullable keyId;
 
@@ -510,7 +762,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 @property (nonatomic, strong) NSArray<NSString *> * _Nullable grantTokens;
 
 /**
- <p>A unique identifier for the customer master key. This value can be a globally unique identifier, a fully specified ARN to either an alias or a key, or an alias name prefixed by "alias/".</p><ul><li><p>Key ARN Example - arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012</p></li><li><p>Alias ARN Example - arn:aws:kms:us-east-1:123456789012:alias/MyAliasName</p></li><li><p>Globally Unique Key ID Example - 12345678-1234-1234-1234-123456789012</p></li><li><p>Alias Name Example - alias/MyAliasName</p></li></ul>
+ <p>A unique identifier for the customer master key (CMK).</p><p>To specify a CMK, use its key ID, Amazon Resource Name (ARN), alias name, or alias ARN. When using an alias name, prefix it with "alias/". To specify a CMK in a different AWS account, you must use the key ARN or alias ARN.</p><p>For example:</p><ul><li><p>Key ID: <code>1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Key ARN: <code>arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Alias name: <code>alias/ExampleAlias</code></p></li><li><p>Alias ARN: <code>arn:aws:kms:us-east-2:111122223333:alias/ExampleAlias</code></p></li></ul><p>To get the key ID and key ARN for a CMK, use <a>ListKeys</a> or <a>DescribeKey</a>. To get the alias name and alias ARN, use <a>ListAliases</a>.</p>
  */
 @property (nonatomic, strong) NSString * _Nullable keyId;
 
@@ -528,7 +780,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 
 
 /**
- <p>The encrypted plaintext. If you are using the CLI, the value is Base64 encoded. Otherwise, it is not encoded.</p>
+ <p>The encrypted plaintext. When you use the HTTP API or the AWS CLI, the value is Base64-encdoded. Otherwise, it is not encoded.</p>
  */
 @property (nonatomic, strong) NSData * _Nullable ciphertextBlob;
 
@@ -556,7 +808,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 @property (nonatomic, strong) NSArray<NSString *> * _Nullable grantTokens;
 
 /**
- <p>The identifier of the CMK under which to generate and encrypt the data encryption key.</p><p>A valid identifier is the unique key ID or the Amazon Resource Name (ARN) of the CMK, or the alias name or ARN of an alias that refers to the CMK. Examples:</p><ul><li><p>Unique key ID: <code>1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>CMK ARN: <code>arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Alias name: <code>alias/ExampleAlias</code></p></li><li><p>Alias ARN: <code>arn:aws:kms:us-east-2:111122223333:alias/ExampleAlias</code></p></li></ul>
+ <p>The identifier of the CMK under which to generate and encrypt the data encryption key.</p><p>To specify a CMK, use its key ID, Amazon Resource Name (ARN), alias name, or alias ARN. When using an alias name, prefix it with "alias/". To specify a CMK in a different AWS account, you must use the key ARN or alias ARN.</p><p>For example:</p><ul><li><p>Key ID: <code>1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Key ARN: <code>arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Alias name: <code>alias/ExampleAlias</code></p></li><li><p>Alias ARN: <code>arn:aws:kms:us-east-2:111122223333:alias/ExampleAlias</code></p></li></ul><p>To get the key ID and key ARN for a CMK, use <a>ListKeys</a> or <a>DescribeKey</a>. To get the alias name and alias ARN, use <a>ListAliases</a>.</p>
  */
 @property (nonatomic, strong) NSString * _Nullable keyId;
 
@@ -579,7 +831,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 
 
 /**
- <p>The encrypted data encryption key.</p>
+ <p>The encrypted data encryption key. When you use the HTTP API or the AWS CLI, the value is Base64-encdoded. Otherwise, it is not encoded.</p>
  */
 @property (nonatomic, strong) NSData * _Nullable ciphertextBlob;
 
@@ -589,7 +841,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 @property (nonatomic, strong) NSString * _Nullable keyId;
 
 /**
- <p>The data encryption key. Use this data key for local encryption and decryption, then remove it from memory as soon as possible.</p>
+ <p>The data encryption key. When you use the HTTP API or the AWS CLI, the value is Base64-encdoded. Otherwise, it is not encoded. Use this data key for local encryption and decryption, then remove it from memory as soon as possible.</p>
  */
 @property (nonatomic, strong) NSData * _Nullable plaintext;
 
@@ -612,7 +864,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 @property (nonatomic, strong) NSArray<NSString *> * _Nullable grantTokens;
 
 /**
- <p>The identifier of the CMK under which to generate and encrypt the data encryption key.</p><p>A valid identifier is the unique key ID or the Amazon Resource Name (ARN) of the CMK, or the alias name or ARN of an alias that refers to the CMK. Examples:</p><ul><li><p>Unique key ID: <code>1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>CMK ARN: <code>arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Alias name: <code>alias/ExampleAlias</code></p></li><li><p>Alias ARN: <code>arn:aws:kms:us-east-2:111122223333:alias/ExampleAlias</code></p></li></ul>
+ <p>The identifier of the customer master key (CMK) under which to generate and encrypt the data encryption key.</p><p>To specify a CMK, use its key ID, Amazon Resource Name (ARN), alias name, or alias ARN. When using an alias name, prefix it with "alias/". To specify a CMK in a different AWS account, you must use the key ARN or alias ARN.</p><p>For example:</p><ul><li><p>Key ID: <code>1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Key ARN: <code>arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Alias name: <code>alias/ExampleAlias</code></p></li><li><p>Alias ARN: <code>arn:aws:kms:us-east-2:111122223333:alias/ExampleAlias</code></p></li></ul><p>To get the key ID and key ARN for a CMK, use <a>ListKeys</a> or <a>DescribeKey</a>. To get the alias name and alias ARN, use <a>ListAliases</a>.</p>
  */
 @property (nonatomic, strong) NSString * _Nullable keyId;
 
@@ -635,7 +887,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 
 
 /**
- <p>The encrypted data encryption key.</p>
+ <p>The encrypted data encryption key. When you use the HTTP API or the AWS CLI, the value is Base64-encdoded. Otherwise, it is not encoded.</p>
  */
 @property (nonatomic, strong) NSData * _Nullable ciphertextBlob;
 
@@ -653,6 +905,11 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 
 
 /**
+ <p>Generates the random byte string in the AWS CloudHSM cluster that is associated with the specified <a href="http://docs.aws.amazon.com/kms/latest/developerguide/key-store-overview.html">custom key store</a>. To find the ID of a custom key store, use the <a>DescribeCustomKeyStores</a> operation.</p>
+ */
+@property (nonatomic, strong) NSString * _Nullable customKeyStoreId;
+
+/**
  <p>The length of the byte string.</p>
  */
 @property (nonatomic, strong) NSNumber * _Nullable numberOfBytes;
@@ -666,7 +923,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 
 
 /**
- <p>The unpredictable byte string.</p>
+ <p>The random byte string. When you use the HTTP API or the AWS CLI, the value is Base64-encdoded. Otherwise, it is not encoded.</p>
  */
 @property (nonatomic, strong) NSData * _Nullable plaintext;
 
@@ -679,12 +936,12 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 
 
 /**
- <p>A unique identifier for the customer master key. This value can be a globally unique identifier or the fully specified ARN to a key.</p><ul><li><p>Key ARN Example - arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012</p></li><li><p>Globally Unique Key ID Example - 12345678-1234-1234-1234-123456789012</p></li></ul>
+ <p>A unique identifier for the customer master key (CMK).</p><p>Specify the key ID or the Amazon Resource Name (ARN) of the CMK.</p><p>For example:</p><ul><li><p>Key ID: <code>1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Key ARN: <code>arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li></ul><p>To get the key ID and key ARN for a CMK, use <a>ListKeys</a> or <a>DescribeKey</a>.</p>
  */
 @property (nonatomic, strong) NSString * _Nullable keyId;
 
 /**
- <p>String that contains the name of the policy. Currently, this must be "default". Policy names can be discovered by calling <a>ListKeyPolicies</a>.</p>
+ <p>Specifies the name of the key policy. The only valid name is <code>default</code>. To get the names of key policies, use <a>ListKeyPolicies</a>.</p>
  */
 @property (nonatomic, strong) NSString * _Nullable policyName;
 
@@ -697,7 +954,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 
 
 /**
- <p>A policy document in JSON format.</p>
+ <p>A key policy document in JSON format.</p>
  */
 @property (nonatomic, strong) NSString * _Nullable policy;
 
@@ -710,7 +967,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 
 
 /**
- <p>A unique identifier for the customer master key. This value can be a globally unique identifier or the fully specified ARN to a key.</p><ul><li><p>Key ARN Example - arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012</p></li><li><p>Globally Unique Key ID Example - 12345678-1234-1234-1234-123456789012</p></li></ul>
+ <p>A unique identifier for the customer master key (CMK).</p><p>Specify the key ID or the Amazon Resource Name (ARN) of the CMK. To specify a CMK in a different AWS account, you must use the key ARN.</p><p>For example:</p><ul><li><p>Key ID: <code>1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Key ARN: <code>arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li></ul><p>To get the key ID and key ARN for a CMK, use <a>ListKeys</a> or <a>DescribeKey</a>.</p>
  */
 @property (nonatomic, strong) NSString * _Nullable keyId;
 
@@ -736,7 +993,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 
 
 /**
- <p>The identifier of the CMK into which you will import key material. The CMK's <code>Origin</code> must be <code>EXTERNAL</code>.</p><p>A valid identifier is the unique key ID or the Amazon Resource Name (ARN) of the CMK. Examples:</p><ul><li><p>Unique key ID: <code>1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Key ARN: <code>arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li></ul>
+ <p>The identifier of the CMK into which you will import key material. The CMK's <code>Origin</code> must be <code>EXTERNAL</code>.</p><p>Specify the key ID or the Amazon Resource Name (ARN) of the CMK.</p><p>For example:</p><ul><li><p>Key ID: <code>1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Key ARN: <code>arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li></ul><p>To get the key ID and key ARN for a CMK, use <a>ListKeys</a> or <a>DescribeKey</a>.</p>
  */
 @property (nonatomic, strong) NSString * _Nullable keyId;
 
@@ -769,7 +1026,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 @property (nonatomic, strong) NSString * _Nullable keyId;
 
 /**
- <p>The time at which the import token and public key are no longer valid. After this time, you cannot use them to make an <a>ImportKeyMaterial</a> request and you must send another <code>GetParametersForImport</code> request to retrieve new ones.</p>
+ <p>The time at which the import token and public key are no longer valid. After this time, you cannot use them to make an <a>ImportKeyMaterial</a> request and you must send another <code>GetParametersForImport</code> request to get new ones.</p>
  */
 @property (nonatomic, strong) NSDate * _Nullable parametersValidTo;
 
@@ -781,18 +1038,18 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 @end
 
 /**
- <p>A structure for specifying the conditions under which the operations permitted by the grant are allowed.</p><p>You can use this structure to allow the operations permitted by the grant only when a specified encryption context is present. For more information about encryption context, see <a href="http://docs.aws.amazon.com/kms/latest/developerguide/encryption-context.html">Encryption Context</a> in the <i>AWS Key Management Service Developer Guide</i>.</p>
+ <p>A structure that you can use to allow certain operations in the grant only when the desired encryption context is present. For more information about encryption context, see <a href="http://docs.aws.amazon.com/kms/latest/developerguide/encryption-context.html">Encryption Context</a> in the <i>AWS Key Management Service Developer Guide</i>.</p><p>Grant constraints apply only to operations that accept encryption context as input. For example, the <code><a>DescribeKey</a></code> operation does not accept encryption context as input. A grant that allows the <code>DescribeKey</code> operation does so regardless of the grant constraints. In constrast, the <code><a>Encrypt</a></code> operation accepts encryption context as input. A grant that allows the <code>Encrypt</code> operation does so only when the encryption context of the <code>Encrypt</code> operation satisfies the grant constraints.</p>
  */
 @interface AWSKMSGrantConstraints : AWSModel
 
 
 /**
- <p>Contains a list of key-value pairs that must be present in the encryption context of a subsequent operation permitted by the grant. When a subsequent operation permitted by the grant includes an encryption context that matches this list, the grant allows the operation. Otherwise, the operation is not allowed.</p>
+ <p>A list of key-value pairs that must be present in the encryption context of certain subsequent operations that the grant allows. When certain subsequent operations allowed by the grant include encryption context that matches this list, the grant allows the operation. Otherwise, the grant does not allow the operation.</p>
  */
 @property (nonatomic, strong) NSDictionary<NSString *, NSString *> * _Nullable encryptionContextEquals;
 
 /**
- <p>Contains a list of key-value pairs, a subset of which must be present in the encryption context of a subsequent operation permitted by the grant. When a subsequent operation permitted by the grant includes an encryption context that matches this list or is a subset of this list, the grant allows the operation. Otherwise, the operation is not allowed.</p>
+ <p>A list of key-value pairs, all of which must be present in the encryption context of certain subsequent operations that the grant allows. When certain subsequent operations allowed by the grant include encryption context that matches this list or is a superset of this list, the grant allows the operation. Otherwise, the grant does not allow the operation.</p>
  */
 @property (nonatomic, strong) NSDictionary<NSString *, NSString *> * _Nullable encryptionContextSubset;
 
@@ -805,7 +1062,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 
 
 /**
- <p>The conditions under which the grant's operations are allowed.</p>
+ <p>A list of key-value pairs that must be present in the encryption context of certain subsequent operations that the grant allows.</p>
  */
 @property (nonatomic, strong) AWSKMSGrantConstraints * _Nullable constraints;
 
@@ -873,7 +1130,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 @property (nonatomic, strong) NSData * _Nullable importToken;
 
 /**
- <p>The identifier of the CMK to import the key material into. The CMK's <code>Origin</code> must be <code>EXTERNAL</code>.</p><p>A valid identifier is the unique key ID or the Amazon Resource Name (ARN) of the CMK. Examples:</p><ul><li><p>Unique key ID: <code>1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Key ARN: <code>arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li></ul>
+ <p>The identifier of the CMK to import the key material into. The CMK's <code>Origin</code> must be <code>EXTERNAL</code>.</p><p>Specify the key ID or the Amazon Resource Name (ARN) of the CMK.</p><p>For example:</p><ul><li><p>Key ID: <code>1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Key ARN: <code>arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li></ul><p>To get the key ID and key ARN for a CMK, use <a>ListKeys</a> or <a>DescribeKey</a>.</p>
  */
 @property (nonatomic, strong) NSString * _Nullable keyId;
 
@@ -928,12 +1185,22 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 @property (nonatomic, strong) NSString * _Nullable arn;
 
 /**
+ <p>The cluster ID of the AWS CloudHSM cluster that contains the key material for the CMK. When you create a CMK in a <a href="http://docs.aws.amazon.com/kms/latest/developerguide/key-store-overview.html">custom key store</a>, AWS KMS creates the key material for the CMK in the associated AWS CloudHSM cluster. This value is present only when the CMK is created in a custom key store.</p>
+ */
+@property (nonatomic, strong) NSString * _Nullable cloudHsmClusterId;
+
+/**
  <p>The date and time when the CMK was created.</p>
  */
 @property (nonatomic, strong) NSDate * _Nullable creationDate;
 
 /**
- <p>The date and time after which AWS KMS deletes the CMK. This value is present only when <code>KeyState</code> is <code>PendingDeletion</code>, otherwise this value is omitted.</p>
+ <p>A unique identifier for the <a href="http://docs.aws.amazon.com/kms/latest/developerguide/key-store-overview.html">custom key store</a> that contains the CMK. This value is present only when the CMK is created in a custom key store.</p>
+ */
+@property (nonatomic, strong) NSString * _Nullable customKeyStoreId;
+
+/**
+ <p>The date and time after which AWS KMS deletes the CMK. This value is present only when <code>KeyState</code> is <code>PendingDeletion</code>.</p>
  */
 @property (nonatomic, strong) NSDate * _Nullable deletionDate;
 
@@ -958,6 +1225,11 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 @property (nonatomic, strong) NSString * _Nullable keyId;
 
 /**
+ <p>The CMK's manager. CMKs are either customer-managed or AWS-managed. For more information about the difference, see <a href="http://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#master_keys">Customer Master Keys</a> in the <i>AWS Key Management Service Developer Guide</i>.</p>
+ */
+@property (nonatomic, assign) AWSKMSKeyManagerType keyManager;
+
+/**
  <p>The state of the CMK.</p><p>For more information about how key state affects the use of a CMK, see <a href="http://docs.aws.amazon.com/kms/latest/developerguide/key-state.html">How Key State Affects the Use of a Customer Master Key</a> in the <i>AWS Key Management Service Developer Guide</i>.</p>
  */
 @property (nonatomic, assign) AWSKMSKeyState keyState;
@@ -968,7 +1240,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 @property (nonatomic, assign) AWSKMSKeyUsageType keyUsage;
 
 /**
- <p>The source of the CMK's key material. When this value is <code>AWS_KMS</code>, AWS KMS created the key material. When this value is <code>EXTERNAL</code>, the key material was imported from your existing key management infrastructure or the CMK lacks key material.</p>
+ <p>The source of the CMK's key material. When this value is <code>AWS_KMS</code>, AWS KMS created the key material. When this value is <code>EXTERNAL</code>, the key material was imported from your existing key management infrastructure or the CMK lacks key material. When this value is <code>AWS_CLOUDHSM</code>, the key material was created in the AWS CloudHSM cluster associated with a custom key store.</p>
  */
 @property (nonatomic, assign) AWSKMSOriginType origin;
 
@@ -984,6 +1256,11 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
  */
 @interface AWSKMSListAliasesRequest : AWSRequest
 
+
+/**
+ <p>Lists only aliases that refer to the specified CMK. The value of this parameter can be the ID or Amazon Resource Name (ARN) of a CMK in the caller's account and region. You cannot use an alias name or alias ARN in this value.</p><p>This parameter is optional. If you omit it, <code>ListAliases</code> returns all aliases in the account and region.</p>
+ */
+@property (nonatomic, strong) NSString * _Nullable keyId;
 
 /**
  <p>Use this parameter to specify the maximum number of items to return. When this value is present, AWS KMS does not return more than the specified number of items, but it might return fewer.</p><p>This value is optional. If you include a value, it must be between 1 and 100, inclusive. If you do not include a value, it defaults to 50.</p>
@@ -1004,7 +1281,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 
 
 /**
- <p>A list of key aliases in the user's account.</p>
+ <p>A list of aliases.</p>
  */
 @property (nonatomic, strong) NSArray<AWSKMSAliasListEntry *> * _Nullable aliases;
 
@@ -1014,7 +1291,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 @property (nonatomic, strong) NSString * _Nullable nextMarker;
 
 /**
- <p>A flag that indicates whether there are more items in the list. When this value is true, the list in this response is truncated. To retrieve more items, pass the value of the <code>NextMarker</code> element in this response to the <code>Marker</code> parameter in a subsequent request.</p>
+ <p>A flag that indicates whether there are more items in the list. When this value is true, the list in this response is truncated. To get more items, pass the value of the <code>NextMarker</code> element in this response to the <code>Marker</code> parameter in a subsequent request.</p>
  */
 @property (nonatomic, strong) NSNumber * _Nullable truncated;
 
@@ -1027,7 +1304,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 
 
 /**
- <p>A unique identifier for the customer master key. This value can be a globally unique identifier or the fully specified ARN to a key.</p><ul><li><p>Key ARN Example - arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012</p></li><li><p>Globally Unique Key ID Example - 12345678-1234-1234-1234-123456789012</p></li></ul>
+ <p>A unique identifier for the customer master key (CMK).</p><p>Specify the key ID or the Amazon Resource Name (ARN) of the CMK. To specify a CMK in a different AWS account, you must use the key ARN.</p><p>For example:</p><ul><li><p>Key ID: <code>1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Key ARN: <code>arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li></ul><p>To get the key ID and key ARN for a CMK, use <a>ListKeys</a> or <a>DescribeKey</a>.</p>
  */
 @property (nonatomic, strong) NSString * _Nullable keyId;
 
@@ -1060,7 +1337,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 @property (nonatomic, strong) NSString * _Nullable nextMarker;
 
 /**
- <p>A flag that indicates whether there are more items in the list. When this value is true, the list in this response is truncated. To retrieve more items, pass the value of the <code>NextMarker</code> element in this response to the <code>Marker</code> parameter in a subsequent request.</p>
+ <p>A flag that indicates whether there are more items in the list. When this value is true, the list in this response is truncated. To get more items, pass the value of the <code>NextMarker</code> element in this response to the <code>Marker</code> parameter in a subsequent request.</p>
  */
 @property (nonatomic, strong) NSNumber * _Nullable truncated;
 
@@ -1073,7 +1350,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 
 
 /**
- <p>A unique identifier for the customer master key (CMK). You can use the unique key ID or the Amazon Resource Name (ARN) of the CMK. Examples:</p><ul><li><p>Unique key ID: <code>1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Key ARN: <code>arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li></ul>
+ <p>A unique identifier for the customer master key (CMK).</p><p>Specify the key ID or the Amazon Resource Name (ARN) of the CMK.</p><p>For example:</p><ul><li><p>Key ID: <code>1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Key ARN: <code>arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li></ul><p>To get the key ID and key ARN for a CMK, use <a>ListKeys</a> or <a>DescribeKey</a>.</p>
  */
 @property (nonatomic, strong) NSString * _Nullable keyId;
 
@@ -1101,12 +1378,12 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 @property (nonatomic, strong) NSString * _Nullable nextMarker;
 
 /**
- <p>A list of policy names. Currently, there is only one policy and it is named "Default".</p>
+ <p>A list of key policy names. Currently, there is only one key policy per CMK and it is always named <code>default</code>.</p>
  */
 @property (nonatomic, strong) NSArray<NSString *> * _Nullable policyNames;
 
 /**
- <p>A flag that indicates whether there are more items in the list. When this value is true, the list in this response is truncated. To retrieve more items, pass the value of the <code>NextMarker</code> element in this response to the <code>Marker</code> parameter in a subsequent request.</p>
+ <p>A flag that indicates whether there are more items in the list. When this value is true, the list in this response is truncated. To get more items, pass the value of the <code>NextMarker</code> element in this response to the <code>Marker</code> parameter in a subsequent request.</p>
  */
 @property (nonatomic, strong) NSNumber * _Nullable truncated;
 
@@ -1137,7 +1414,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 
 
 /**
- <p>A list of keys.</p>
+ <p>A list of customer master keys (CMKs).</p>
  */
 @property (nonatomic, strong) NSArray<AWSKMSKeyListEntry *> * _Nullable keys;
 
@@ -1147,7 +1424,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 @property (nonatomic, strong) NSString * _Nullable nextMarker;
 
 /**
- <p>A flag that indicates whether there are more items in the list. When this value is true, the list in this response is truncated. To retrieve more items, pass the value of the <code>NextMarker</code> element in this response to the <code>Marker</code> parameter in a subsequent request.</p>
+ <p>A flag that indicates whether there are more items in the list. When this value is true, the list in this response is truncated. To get more items, pass the value of the <code>NextMarker</code> element in this response to the <code>Marker</code> parameter in a subsequent request.</p>
  */
 @property (nonatomic, strong) NSNumber * _Nullable truncated;
 
@@ -1160,7 +1437,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 
 
 /**
- <p>A unique identifier for the CMK whose tags you are listing. You can use the unique key ID or the Amazon Resource Name (ARN) of the CMK. Examples:</p><ul><li><p>Unique key ID: <code>1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Key ARN: <code>arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li></ul>
+ <p>A unique identifier for the customer master key (CMK).</p><p>Specify the key ID or the Amazon Resource Name (ARN) of the CMK.</p><p>For example:</p><ul><li><p>Key ID: <code>1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Key ARN: <code>arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li></ul><p>To get the key ID and key ARN for a CMK, use <a>ListKeys</a> or <a>DescribeKey</a>.</p>
  */
 @property (nonatomic, strong) NSString * _Nullable keyId;
 
@@ -1193,7 +1470,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 @property (nonatomic, strong) NSArray<AWSKMSTag *> * _Nullable tags;
 
 /**
- <p>A flag that indicates whether there are more items in the list. When this value is true, the list in this response is truncated. To retrieve more items, pass the value of the <code>NextMarker</code> element in this response to the <code>Marker</code> parameter in a subsequent request.</p>
+ <p>A flag that indicates whether there are more items in the list. When this value is true, the list in this response is truncated. To get more items, pass the value of the <code>NextMarker</code> element in this response to the <code>Marker</code> parameter in a subsequent request.</p>
  */
 @property (nonatomic, strong) NSNumber * _Nullable truncated;
 
@@ -1229,22 +1506,22 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 
 
 /**
- <p>A flag to indicate whether to bypass the key policy lockout safety check.</p><important><p>Setting this value to true increases the likelihood that the CMK becomes unmanageable. Do not set this value to true indiscriminately.</p><p>For more information, refer to the scenario in the <a href="http://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html#key-policy-default-allow-root-enable-iam">Default Key Policy</a> section in the <i>AWS Key Management Service Developer Guide</i>.</p></important><p>Use this parameter only when you intend to prevent the principal that is making the request from making a subsequent <code>PutKeyPolicy</code> request on the CMK.</p><p>The default value is false.</p>
+ <p>A flag to indicate whether to bypass the key policy lockout safety check.</p><important><p>Setting this value to true increases the risk that the CMK becomes unmanageable. Do not set this value to true indiscriminately.</p><p>For more information, refer to the scenario in the <a href="http://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html#key-policy-default-allow-root-enable-iam">Default Key Policy</a> section in the <i>AWS Key Management Service Developer Guide</i>.</p></important><p>Use this parameter only when you intend to prevent the principal that is making the request from making a subsequent <code>PutKeyPolicy</code> request on the CMK.</p><p>The default value is false.</p>
  */
 @property (nonatomic, strong) NSNumber * _Nullable bypassPolicyLockoutSafetyCheck;
 
 /**
- <p>A unique identifier for the CMK.</p><p>Use the CMK's unique identifier or its Amazon Resource Name (ARN). For example:</p><ul><li><p>Unique ID: 1234abcd-12ab-34cd-56ef-1234567890ab</p></li><li><p>ARN: arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</p></li></ul>
+ <p>A unique identifier for the customer master key (CMK).</p><p>Specify the key ID or the Amazon Resource Name (ARN) of the CMK.</p><p>For example:</p><ul><li><p>Key ID: <code>1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Key ARN: <code>arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li></ul><p>To get the key ID and key ARN for a CMK, use <a>ListKeys</a> or <a>DescribeKey</a>.</p>
  */
 @property (nonatomic, strong) NSString * _Nullable keyId;
 
 /**
- <p>The key policy to attach to the CMK.</p><p>If you do not set <code>BypassPolicyLockoutSafetyCheck</code> to true, the policy must meet the following criteria:</p><ul><li><p>It must allow the principal that is making the <code>PutKeyPolicy</code> request to make a subsequent <code>PutKeyPolicy</code> request on the CMK. This reduces the likelihood that the CMK becomes unmanageable. For more information, refer to the scenario in the <a href="http://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html#key-policy-default-allow-root-enable-iam">Default Key Policy</a> section in the <i>AWS Key Management Service Developer Guide</i>.</p></li><li><p>The principals that are specified in the key policy must exist and be visible to AWS KMS. When you create a new AWS principal (for example, an IAM user or role), you might need to enforce a delay before specifying the new principal in a key policy because the new principal might not immediately be visible to AWS KMS. For more information, see <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/troubleshoot_general.html#troubleshoot_general_eventual-consistency">Changes that I make are not always immediately visible</a> in the <i>IAM User Guide</i>.</p></li></ul><p>The policy size limit is 32 KiB (32768 bytes).</p>
+ <p>The key policy to attach to the CMK.</p><p>The key policy must meet the following criteria:</p><ul><li><p>If you don't set <code>BypassPolicyLockoutSafetyCheck</code> to true, the key policy must allow the principal that is making the <code>PutKeyPolicy</code> request to make a subsequent <code>PutKeyPolicy</code> request on the CMK. This reduces the risk that the CMK becomes unmanageable. For more information, refer to the scenario in the <a href="http://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html#key-policy-default-allow-root-enable-iam">Default Key Policy</a> section of the <i>AWS Key Management Service Developer Guide</i>.</p></li><li><p>Each statement in the key policy must contain one or more principals. The principals in the key policy must exist and be visible to AWS KMS. When you create a new AWS principal (for example, an IAM user or role), you might need to enforce a delay before including the new principal in a key policy because the new principal might not be immediately visible to AWS KMS. For more information, see <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/troubleshoot_general.html#troubleshoot_general_eventual-consistency">Changes that I make are not always immediately visible</a> in the <i>AWS Identity and Access Management User Guide</i>.</p></li></ul><p>The key policy size limit is 32 kilobytes (32768 bytes).</p>
  */
 @property (nonatomic, strong) NSString * _Nullable policy;
 
 /**
- <p>The name of the key policy.</p><p>This value must be <code>default</code>.</p>
+ <p>The name of the key policy. The only valid value is <code>default</code>.</p>
  */
 @property (nonatomic, strong) NSString * _Nullable policyName;
 
@@ -1267,7 +1544,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 @property (nonatomic, strong) NSDictionary<NSString *, NSString *> * _Nullable destinationEncryptionContext;
 
 /**
- <p>A unique identifier for the CMK to use to reencrypt the data. This value can be a globally unique identifier, a fully specified ARN to either an alias or a key, or an alias name prefixed by "alias/".</p><ul><li><p>Key ARN Example - arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012</p></li><li><p>Alias ARN Example - arn:aws:kms:us-east-1:123456789012:alias/MyAliasName</p></li><li><p>Globally Unique Key ID Example - 12345678-1234-1234-1234-123456789012</p></li><li><p>Alias Name Example - alias/MyAliasName</p></li></ul>
+ <p>A unique identifier for the CMK that is used to reencrypt the data.</p><p>To specify a CMK, use its key ID, Amazon Resource Name (ARN), alias name, or alias ARN. When using an alias name, prefix it with "alias/". To specify a CMK in a different AWS account, you must use the key ARN or alias ARN.</p><p>For example:</p><ul><li><p>Key ID: <code>1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Key ARN: <code>arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Alias name: <code>alias/ExampleAlias</code></p></li><li><p>Alias ARN: <code>arn:aws:kms:us-east-2:111122223333:alias/ExampleAlias</code></p></li></ul><p>To get the key ID and key ARN for a CMK, use <a>ListKeys</a> or <a>DescribeKey</a>. To get the alias name and alias ARN, use <a>ListAliases</a>.</p>
  */
 @property (nonatomic, strong) NSString * _Nullable destinationKeyId;
 
@@ -1290,7 +1567,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 
 
 /**
- <p>The reencrypted data.</p>
+ <p>The reencrypted data. When you use the HTTP API or the AWS CLI, the value is Base64-encdoded. Otherwise, it is not encoded.</p>
  */
 @property (nonatomic, strong) NSData * _Nullable ciphertextBlob;
 
@@ -1323,7 +1600,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 @property (nonatomic, strong) NSString * _Nullable grantToken;
 
 /**
- <p>The Amazon Resource Name of the CMK associated with the grant. Example:</p><ul><li><p>arn:aws:kms:us-east-2:444455556666:key/1234abcd-12ab-34cd-56ef-1234567890ab</p></li></ul>
+ <p>The Amazon Resource Name (ARN) of the CMK associated with the grant. </p><p>For example: <code>arn:aws:kms:us-east-2:444455556666:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p>
  */
 @property (nonatomic, strong) NSString * _Nullable keyId;
 
@@ -1341,7 +1618,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 @property (nonatomic, strong) NSString * _Nullable grantId;
 
 /**
- <p>A unique identifier for the customer master key associated with the grant. This value can be a globally unique identifier or the fully specified ARN to a key.</p><ul><li><p>Key ARN Example - arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012</p></li><li><p>Globally Unique Key ID Example - 12345678-1234-1234-1234-123456789012</p></li></ul>
+ <p>A unique identifier for the customer master key associated with the grant.</p><p>Specify the key ID or the Amazon Resource Name (ARN) of the CMK. To specify a CMK in a different AWS account, you must use the key ARN.</p><p>For example:</p><ul><li><p>Key ID: <code>1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Key ARN: <code>arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li></ul><p>To get the key ID and key ARN for a CMK, use <a>ListKeys</a> or <a>DescribeKey</a>.</p>
  */
 @property (nonatomic, strong) NSString * _Nullable keyId;
 
@@ -1354,7 +1631,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 
 
 /**
- <p>The unique identifier for the customer master key (CMK) to delete.</p><p>To specify this value, use the unique key ID or the Amazon Resource Name (ARN) of the CMK. Examples:</p><ul><li><p>Unique key ID: 1234abcd-12ab-34cd-56ef-1234567890ab</p></li><li><p>Key ARN: arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</p></li></ul><p>To obtain the unique key ID and key ARN for a given CMK, use <a>ListKeys</a> or <a>DescribeKey</a>.</p>
+ <p>The unique identifier of the customer master key (CMK) to delete.</p><p>Specify the key ID or the Amazon Resource Name (ARN) of the CMK.</p><p>For example:</p><ul><li><p>Key ID: <code>1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Key ARN: <code>arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li></ul><p>To get the key ID and key ARN for a CMK, use <a>ListKeys</a> or <a>DescribeKey</a>.</p>
  */
 @property (nonatomic, strong) NSString * _Nullable keyId;
 
@@ -1384,7 +1661,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 @end
 
 /**
- <p>A key-value pair. A tag consists of a tag key and a tag value. Tag keys and tag values are both required, but tag values can be empty (null) strings.</p>
+ <p>A key-value pair. A tag consists of a tag key and a tag value. Tag keys and tag values are both required, but tag values can be empty (null) strings.</p><p>For information about the rules that apply to tag keys and tag values, see <a href="http://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/allocation-tag-restrictions.html">User-Defined Tag Restrictions</a> in the <i>AWS Billing and Cost Management User Guide</i>.</p>
  Required parameters: [TagKey, TagValue]
  */
 @interface AWSKMSTag : AWSModel
@@ -1409,7 +1686,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 
 
 /**
- <p>A unique identifier for the CMK you are tagging. You can use the unique key ID or the Amazon Resource Name (ARN) of the CMK. Examples:</p><ul><li><p>Unique key ID: <code>1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Key ARN: <code>arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li></ul>
+ <p>A unique identifier for the CMK you are tagging.</p><p>Specify the key ID or the Amazon Resource Name (ARN) of the CMK.</p><p>For example:</p><ul><li><p>Key ID: <code>1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Key ARN: <code>arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li></ul><p>To get the key ID and key ARN for a CMK, use <a>ListKeys</a> or <a>DescribeKey</a>.</p>
  */
 @property (nonatomic, strong) NSString * _Nullable keyId;
 
@@ -1427,7 +1704,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 
 
 /**
- <p>A unique identifier for the CMK from which you are removing tags. You can use the unique key ID or the Amazon Resource Name (ARN) of the CMK. Examples:</p><ul><li><p>Unique key ID: <code>1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Key ARN: <code>arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li></ul>
+ <p>A unique identifier for the CMK from which you are removing tags.</p><p>Specify the key ID or the Amazon Resource Name (ARN) of the CMK.</p><p>For example:</p><ul><li><p>Key ID: <code>1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Key ARN: <code>arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li></ul><p>To get the key ID and key ARN for a CMK, use <a>ListKeys</a> or <a>DescribeKey</a>.</p>
  */
 @property (nonatomic, strong) NSString * _Nullable keyId;
 
@@ -1450,9 +1727,45 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 @property (nonatomic, strong) NSString * _Nullable aliasName;
 
 /**
- <p>Unique identifier of the customer master key to be mapped to the alias. This value can be a globally unique identifier or the fully specified ARN of a key.</p><ul><li><p>Key ARN Example - arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012</p></li><li><p>Globally Unique Key ID Example - 12345678-1234-1234-1234-123456789012</p></li></ul><p>You can call <a>ListAliases</a> to verify that the alias is mapped to the correct <code>TargetKeyId</code>.</p>
+ <p>Unique identifier of the customer master key to be mapped to the alias.</p><p>Specify the key ID or the Amazon Resource Name (ARN) of the CMK.</p><p>For example:</p><ul><li><p>Key ID: <code>1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Key ARN: <code>arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li></ul><p>To get the key ID and key ARN for a CMK, use <a>ListKeys</a> or <a>DescribeKey</a>.</p><p>To verify that the alias is mapped to the correct CMK, use <a>ListAliases</a>.</p>
  */
 @property (nonatomic, strong) NSString * _Nullable targetKeyId;
+
+@end
+
+/**
+ 
+ */
+@interface AWSKMSUpdateCustomKeyStoreRequest : AWSRequest
+
+
+/**
+ <p>Associates the custom key store with a related AWS CloudHSM cluster. </p><p>Enter the cluster ID of the cluster that you used to create the custom key store or a cluster that shares a backup history with the original cluster. You cannot use this parameter to associate a custom key store with a different cluster.</p><p>Clusters that share a backup history have the same cluster certificate. To view the cluster certificate of a cluster, use the <a href="http://docs.aws.amazon.com/cloudhsm/latest/APIReference/API_DescribeClusters.html">DescribeClusters</a> operation.</p>
+ */
+@property (nonatomic, strong) NSString * _Nullable cloudHsmClusterId;
+
+/**
+ <p>Identifies the custom key store that you want to update. Enter the ID of the custom key store. To find the ID of a custom key store, use the <a>DescribeCustomKeyStores</a> operation.</p>
+ */
+@property (nonatomic, strong) NSString * _Nullable customKeyStoreId;
+
+/**
+ <p>Enter the current password of the <code>kmsuser</code> crypto user (CU) in the AWS CloudHSM cluster that is associated with the custom key store.</p><p>This parameter tells AWS KMS the current password of the <code>kmsuser</code> crypto user (CU). It does not set or change the password of any users in the AWS CloudHSM cluster.</p>
+ */
+@property (nonatomic, strong) NSString * _Nullable keyStorePassword;
+
+/**
+ <p>Changes the friendly name of the custom key store to the value that you specify. The custom key store name must be unique in the AWS account.</p>
+ */
+@property (nonatomic, strong) NSString * _Nullable latestCustomKeyStoreName;
+
+@end
+
+/**
+ 
+ */
+@interface AWSKMSUpdateCustomKeyStoreResponse : AWSModel
+
 
 @end
 
@@ -1468,7 +1781,7 @@ typedef NS_ENUM(NSInteger, AWSKMSWrappingKeySpec) {
 @property (nonatomic, strong) NSString * _Nullable detail;
 
 /**
- <p>A unique identifier for the CMK. This value can be a globally unique identifier or the fully specified ARN to a key.</p><ul><li><p>Key ARN Example - arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012</p></li><li><p>Globally Unique Key ID Example - 12345678-1234-1234-1234-123456789012</p></li></ul>
+ <p>A unique identifier for the customer master key (CMK).</p><p>Specify the key ID or the Amazon Resource Name (ARN) of the CMK.</p><p>For example:</p><ul><li><p>Key ID: <code>1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li><li><p>Key ARN: <code>arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab</code></p></li></ul><p>To get the key ID and key ARN for a CMK, use <a>ListKeys</a> or <a>DescribeKey</a>.</p>
  */
 @property (nonatomic, strong) NSString * _Nullable keyId;
 
