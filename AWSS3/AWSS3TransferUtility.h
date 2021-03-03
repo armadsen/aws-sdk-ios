@@ -141,7 +141,7 @@ FOUNDATION_EXPORT NSString *const AWSS3TransferUtilityURLSessionDidBecomeInvalid
  
  }];
  
- @param completionHandler The completion handler to call when the TransferUtility finishes loading transfers from prior sessions.
+ @param completionHandler The completion handler to call when the TransferUtility finishes loading transfers from prior sessions, or fails to instantiate.
  @return The default service client.
  */
 + (instancetype)defaultS3TransferUtility:(nullable void (^)(NSError *_Nullable error)) completionHandler
@@ -242,7 +242,7 @@ FOUNDATION_EXPORT NSString *const AWSS3TransferUtilityURLSessionDidBecomeInvalid
  
  @param configuration A service configuration object.
  @param key           A string to identify the service client.
- @param completionHandler The completion handler to call when the TransferUtility finishes loading transfers from prior sessions.
+ @param completionHandler The completion handler to call when the TransferUtility finishes loading transfers from prior sessions, or fails to instantiate.
  */
 + (void)registerS3TransferUtilityWithConfiguration:(AWSServiceConfiguration *)configuration
                                             forKey:(NSString *)key
@@ -344,7 +344,7 @@ FOUNDATION_EXPORT NSString *const AWSS3TransferUtilityURLSessionDidBecomeInvalid
  @param configuration A service configuration object.
  @param transferUtilityConfiguration An S3 transfer utility configuration object.
  @param key           A string to identify the service client.
- @param completionHandler The completion handler to call when the TransferUtility finishes loading transfers from prior sessions.
+ @param completionHandler The completion handler to call when the TransferUtility finishes loading transfers from prior sessions, or fails to instantiate.
  */
 + (void)registerS3TransferUtilityWithConfiguration:(AWSServiceConfiguration *)configuration
                       transferUtilityConfiguration:(nullable AWSS3TransferUtilityConfiguration *)transferUtilityConfiguration
