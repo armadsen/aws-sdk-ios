@@ -9834,7 +9834,7 @@
 					};
 					CE9DE9C51C6A7C2E0060793F = {
 						CreatedOnToolsVersion = 7.2.1;
-						LastSwiftMigration = 0900;
+						LastSwiftMigration = "";
 						TestTargetID = 181154751E201403008F184C;
 					};
 					CE9DE9FC1C6A7DFF0060793F = {

@@ -15,6 +15,10 @@
 
 #import "AWSDDASLLogCapture.h"
 
+// asl is deprecated, but this code is explicitly for asl, so ignore warnings
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 // Disable legacy macros
 #ifndef AWSDD_LEGACY_MACROS
     #define AWSDD_LEGACY_MACROS 0
@@ -228,3 +232,5 @@ static void (*dd_asl_release)(aslresponse obj);
 }
 
 @end
+
+#pragma clang diagnostic pop

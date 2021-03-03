@@ -10,7 +10,7 @@
 
 #import "AWSTask.h"
 
-#import <libkern/OSAtomic.h>
+#import <stdatomic.h>
 
 #import "AWSBolts.h"
 
@@ -98,12 +98,12 @@ NSString *const AWSTaskMultipleErrorsUserInfoKey = @"errors";
 }
 
 + (instancetype)taskForCompletionOfAllTasks:(nullable NSArray<AWSTask *> *)tasks {
-    __block int32_t total = (int32_t)tasks.count;
+    __block _Atomic(int32_t) total = (int32_t)tasks.count;
     if (total == 0) {
         return [self taskWithResult:nil];
     }
 
-    __block int32_t cancelled = 0;
+    __block _Atomic(int32_t) cancelled = 0;
     NSObject *lock = [[NSObject alloc] init];
     NSMutableArray *errors = [NSMutableArray array];
 
@@ -115,10 +115,11 @@ NSString *const AWSTaskMultipleErrorsUserInfoKey = @"errors";
                     [errors addObject:t.error];
                 }
             } else if (t.cancelled) {
-                OSAtomicIncrement32Barrier(&cancelled);
+				atomic_fetch_add(&cancelled, 1);
             }
 
-            if (OSAtomicDecrement32Barrier(&total) == 0) {
+
+            if (atomic_fetch_sub(&total, 1) == 1) {
                 if (errors.count > 0) {
                     if (errors.count == 1) {
                         tcs.error = [errors firstObject];
@@ -148,13 +149,13 @@ NSString *const AWSTaskMultipleErrorsUserInfoKey = @"errors";
 
 + (instancetype)taskForCompletionOfAnyTask:(nullable NSArray<AWSTask *> *)tasks
 {
-    __block int32_t total = (int32_t)tasks.count;
+    __block _Atomic(int32_t) total = (int32_t)tasks.count;
     if (total == 0) {
         return [self taskWithResult:nil];
     }
     
-    __block int completed = 0;
-    __block int32_t cancelled = 0;
+    __block _Atomic(int) completed = 0;
+    __block _Atomic(int32_t) cancelled = 0;
     
     NSObject *lock = [NSObject new];
     NSMutableArray<NSError *> *errors = [NSMutableArray new];
@@ -167,16 +168,16 @@ NSString *const AWSTaskMultipleErrorsUserInfoKey = @"errors";
                     [errors addObject:t.error];
                 }
             } else if (t.cancelled) {
-                OSAtomicIncrement32Barrier(&cancelled);
+				atomic_fetch_add(&cancelled, 1);
             } else {
-                if(OSAtomicCompareAndSwap32Barrier(0, 1, &completed)) {
+				if (atomic_compare_exchange_strong(&completed, &(int){1}, 0)) {
                     [source setResult:t.result];
                 }
             }
-            
-            if (OSAtomicDecrement32Barrier(&total) == 0 &&
-                OSAtomicCompareAndSwap32Barrier(0, 1, &completed)) {
-                if (cancelled > 0) {
+
+            if (atomic_fetch_sub(&total, 1) == 1 &&
+				atomic_compare_exchange_strong(&completed, &(int){1}, 0)) {
+					if (cancelled > 0) {
                     [source cancel];
                 } else if (errors.count > 0) {
                     if (errors.count == 1) {

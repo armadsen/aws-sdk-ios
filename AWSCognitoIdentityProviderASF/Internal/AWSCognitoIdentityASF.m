@@ -1,9 +1,15 @@
 #import "AWSCognitoIdentityASF.h"
-#import <UIKit/UIKit.h>
+#import "TargetConditionals.h"
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import <CoreTelephony/CTCarrier.h>
 #import <sys/utsname.h>
 #import <CommonCrypto/CommonHMAC.h>
+
+#if TARGET_OS_OSX
+#import <AppKit/AppKit.h>
+#elif TARGET_OS_IOS
+#import <UIKit/UIKit.h>
+#endif
 
 @interface AWSCognitoIdentityASF()
 + (NSString *) dashIfNil: (NSString *) str;

@@ -14,7 +14,8 @@
 //   prior written permission of Deusty, LLC.
 
 #import "AWSDDDispatchQueueLogFormatter.h"
-#import <libkern/OSAtomic.h>
+#import <stdatomic.h>
+#import <os/lock.h>
 #import <objc/runtime.h>
 
 
@@ -26,10 +27,10 @@
     AWSDDDispatchQueueLogFormatterMode _mode;
     NSString *_dateFormatterKey;
     
-    int32_t _atomicLoggerCount;
+    _Atomic(int32_t) _atomicLoggerCount;
     NSDateFormatter *_threadUnsafeDateFormatter; // Use [self stringFromDate]
-    
-    OSSpinLock _lock;
+
+	os_unfair_lock_t _lock;
     
     NSUInteger _minQueueLength;           // _prefix == Only access via atomic property
     NSUInteger _maxQueueLength;           // _prefix == Only access via atomic property
@@ -63,7 +64,7 @@
 
         _minQueueLength = 0;
         _maxQueueLength = 0;
-        _lock = OS_SPINLOCK_INIT;
+        _lock = &OS_UNFAIR_LOCK_INIT;
         _replacements = [[NSMutableDictionary alloc] init];
 
         // Set default replacements:
@@ -91,17 +92,17 @@
 - (NSString *)replacementStringForQueueLabel:(NSString *)longLabel {
     NSString *result = nil;
 
-    OSSpinLockLock(&_lock);
+	os_unfair_lock_lock(_lock);
     {
         result = _replacements[longLabel];
     }
-    OSSpinLockUnlock(&_lock);
+	os_unfair_lock_unlock(_lock);
 
     return result;
 }
 
 - (void)setReplacementString:(NSString *)shortLabel forQueueLabel:(NSString *)longLabel {
-    OSSpinLockLock(&_lock);
+    os_unfair_lock_lock(_lock);
     {
         if (shortLabel) {
             _replacements[longLabel] = shortLabel;
@@ -109,7 +110,7 @@
             [_replacements removeObjectForKey:longLabel];
         }
     }
-    OSSpinLockUnlock(&_lock);
+    os_unfair_lock_unlock(_lock);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -214,11 +215,11 @@
             fullLabel = logMessage->_threadName;
         }
 
-        OSSpinLockLock(&_lock);
+        os_unfair_lock_lock(_lock);
         {
             abrvLabel = _replacements[fullLabel];
         }
-        OSSpinLockUnlock(&_lock);
+		os_unfair_lock_unlock(_lock);
 
         if (abrvLabel) {
             queueThreadLabel = abrvLabel;
@@ -267,12 +268,12 @@
 
 - (void)didAddToLogger:(id <AWSDDLogger>  __attribute__((unused)))logger {
     int32_t count = 0;
-    count = OSAtomicIncrement32(&_atomicLoggerCount);
+	count = atomic_fetch_add(&_atomicLoggerCount, 1) + 1;
     NSAssert(count <= 1 || _mode == AWSDDDispatchQueueLogFormatterModeShareble, @"Can't reuse formatter with multiple loggers in non-shareable mode.");
 }
 
 - (void)willRemoveFromLogger:(id <AWSDDLogger> __attribute__((unused)))logger {
-    OSAtomicDecrement32(&_atomicLoggerCount);
+	atomic_fetch_sub(&_atomicLoggerCount, 1);
 }
 
 @end

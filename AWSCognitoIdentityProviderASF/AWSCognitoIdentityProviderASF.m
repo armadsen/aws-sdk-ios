@@ -23,8 +23,15 @@
 #ifdef DEBUG
     build = @"debug";
 #endif
+
+#if defined(__IPHONE_OS_VERSION_MIN_REQUIRED)
     return [AWSCognitoIdentityASF userContextData:  __IPHONE_OS_VERSION_MIN_REQUIRED
                                             build:build userPoolId: userPoolId username:username deviceId:deviceId userPoolClientId:userPoolClientId];
+#elif defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
+	return [AWSCognitoIdentityASF userContextData:  __MAC_OS_X_VERSION_MIN_REQUIRED
+	build:build userPoolId: userPoolId username:username deviceId:deviceId userPoolClientId:userPoolClientId];
+#endif
+	return nil;
 }
 
 @end

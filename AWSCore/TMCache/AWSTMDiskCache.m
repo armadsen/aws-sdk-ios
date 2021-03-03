@@ -415,7 +415,16 @@ NSString * const AWSTMDiskCacheSharedName = @"TMDiskCacheShared";
 
         if ([[NSFileManager defaultManager] fileExistsAtPath:[fileURL path]]) {
             @try {
-                object = [NSKeyedUnarchiver unarchiveObjectWithFile:[fileURL path]];
+				NSError *error = nil;
+				NSData *data = [NSData dataWithContentsOfURL:fileURL options:0 error:&error];
+				if (!data) {
+					AWSTMDiskCacheError(error);
+				} else {
+					object = [NSKeyedUnarchiver unarchivedObjectOfClass:[NSObject class] fromData:data error:&error];
+					if (!object) {
+						AWSTMDiskCacheError(error);
+					}
+				}
             }
             @catch (NSException *exception) {
                 NSError *error = nil;
@@ -479,7 +488,12 @@ NSString * const AWSTMDiskCacheSharedName = @"TMDiskCacheShared";
         if (strongSelf->_willAddObjectBlock)
             strongSelf->_willAddObjectBlock(strongSelf, key, object, fileURL);
 
-        BOOL written = [NSKeyedArchiver archiveRootObject:object toFile:[fileURL path]];
+		BOOL written = NO;
+		NSError *error = nil;
+		NSData *data = [NSKeyedArchiver archivedDataWithRootObject:object requiringSecureCoding:NO error:&error];
+		if (data) {
+			written = [data writeToURL:fileURL options:NSDataWritingAtomic error:&error];
+		}
 
         if (written) {
             [strongSelf setFileModificationDate:now forURL:fileURL];
