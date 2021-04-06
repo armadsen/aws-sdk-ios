@@ -615,7 +615,11 @@ static const NSString * AWSCognitoIdentityUserUserAttributePrefix = @"userAttrib
             AWSCognitoIdentityProviderConfirmDeviceRequest * request = [AWSCognitoIdentityProviderConfirmDeviceRequest new];
             request.accessToken = authResult.accessToken;
             request.deviceKey = deviceKey;
-            request.deviceName = [[UIDevice currentDevice] name];
+            NSString *deviceName = @"Mac";
+#if TARGET_OS_IOS
+            deviceName = [[UIDevice currentDevice] name];
+#endif
+            request.deviceName = deviceName;
 
             AWSCognitoIdentityProviderSrpHelper * srpHelper = [[AWSCognitoIdentityProviderSrpHelper alloc] initWithPoolName:deviceGroup userName:deviceKey password:secret];
             request.deviceSecretVerifierConfig = [AWSCognitoIdentityProviderDeviceSecretVerifierConfigType new];

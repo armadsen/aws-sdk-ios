@@ -15,6 +15,7 @@
 
 #import "AWSCognitoIdentityProviderASF.h"
 #import "AWSCognitoIdentityASF.h"
+#import <TargetConditionals.h>
 
 @implementation AWSCognitoIdentityProviderASF
 
@@ -23,8 +24,11 @@
 #ifdef DEBUG
     build = @"debug";
 #endif
-    return [AWSCognitoIdentityASF userContextData:  __IPHONE_OS_VERSION_MIN_REQUIRED
-                                            build:build userPoolId: userPoolId username:username deviceId:deviceId userPoolClientId:userPoolClientId];
+    int minVersion = 100000;
+#if TARGET_OS_IOS
+    minVersion = __IPHONE_OS_VERSION_MIN_REQUIRED;
+#endif
+    return [AWSCognitoIdentityASF userContextData:minVersion                                            build:build userPoolId: userPoolId username:username deviceId:deviceId userPoolClientId:userPoolClientId];
 }
 
 @end
